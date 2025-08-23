@@ -1,0 +1,670 @@
+/* General Body Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Main Container */
+.container {
+    max-width: 1300px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+/* Header */
+.main-header {
+    background-color: #ffffff;
+    color: #343a40;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.main-header .logo {
+    font-size: 1.75em;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.main-header .user-email-display {
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    color: #495057;
+}
+
+.main-header .user-email-display .material-symbols-outlined {
+    margin-right: 8px;
+    color: #6c757d;
+}
+
+.main-header .btn-logout {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 18px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.main-header .btn-logout .material-symbols-outlined {
+    margin-right: 6px;
+}
+
+.main-header .btn-logout:hover {
+    background-color: #c82333;
+}
+
+/* Card Styles */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.06);
+    transform: translateY(-3px);
+}
+
+.card h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #343a40;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: 500;
+}
+
+.card h2 .arrow-icon {
+    text-decoration: none;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+.card h2 .arrow-icon:hover {
+    color: #0056b3;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 500;
+    font-size: 1em;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+    display: block;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 550px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 32px;
+    font-weight: bold;
+    display: none; /* Hide the close button */
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Floating Action Button (FAB) */
+.fab {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    background-color: #007bff;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.fab:hover {
+    background-color: #0069d9;
+    transform: scale(1.1);
+}
+
+/* Video Grid */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.video-item {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background-color: #fff;
+}
+
+.video-item:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: 180px;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-thumbnail video {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.video-info {
+    padding: 20px;
+}
+
+.video-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #343a40;
+}
+
+.video-actions a {
+    color: #007bff;
+    text-decoration: none;
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+.video-actions a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* Search Form */
+.search-form {
+    position: relative;
+    width: 320px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ced4da;
+    border-radius: 30px;
+    background-color: #f1f3f5;
+    transition: all 0.3s ease;
+}
+
+.search-form:focus-within {
+    border-color: #007bff;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+}
+
+.search-input {
+    flex-grow: 1;
+    border: none;
+    background: none;
+    outline: none;
+    padding: 12px 20px;
+    font-size: 1em;
+}
+
+.search-btn, .clear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+.clear-btn {
+    padding: 0 5px 0 15px;
+    display: none;
+}
+
+.search-btn {
+    padding: 0 15px 0 5px;
+}
+
+/* Suggestions Dropdown */
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+    background-color: #f1f3f5;
+}
+
+/* Video Details Table */
+.video-details-table-container {
+    max-height: 400px; /* Adjust this value as needed */
+    overflow-y: auto;
+    position: relative;
+}
+
+.video-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.9em;
+    min-width: 700px; /* Ensure horizontal scroll on smaller screens */
+}
+
+.video-details-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+
+.video-details-table th,
+.video-details-table td {
+    padding: 12px 15px;
+    border: 1px solid #e9ecef;
+    text-align: left;
+}
+
+.video-details-table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.video-details-table tbody tr:nth-child(even) {
+    background-color: #fefefe;
+}
+
+.video-details-table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+.video-details-table input[type="text"],
+.video-details-table select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.9em;
+}
+
+.video-details-table input[type="text"]:focus,
+.video-details-table select:focus {
+    border-color: #80bdff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.time-input-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.time-input-container input {
+    flex-grow: 1;
+}
+
+.btn-get-time, .btn-play-time {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #007bff;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-get-time:hover, .btn-play-time:hover {
+    background-color: #e9ecef;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.85em;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.save-details-button-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+/* Remove bottom gap for buttons in Possible Improvements card */
+.new-table-card .save-details-button-container {
+    margin-bottom: 0;
+}
+
+.btn-small {
+    padding: 8px 15px;
+    font-size: 0.9em;
+}
+
+/* Item and Video Cards (for dashboard and video grid) */
+.item-card, .video-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    transition: box-shadow 0.3s ease;
+}
+
+.item-card:hover, .video-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.video-card a {
+    text-decoration: none;
+    color: #212529;
+    font-weight: 500;
+}
+
+.current-check {
+    color: #28a745;
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #dc3545;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Generic list container for items inside dashboard cards */
+.item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Header row inside an item card to align name and actions */
+.item-card-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Actions container on the right side of an item card header */
+.item-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Filename/title styling inside item card */
+.item-card .file-name {
+    font-weight: 500;
+    color: #343a40;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Reusable arrow icon button */
+.arrow-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+    color: #007bff;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.arrow-icon:hover {
+    background-color: #e9f2ff;
+    border-color: #cfe2ff;
+    color: #0056b3;
+}
+
+/* Dashboard Grid Container */
+.dashboard-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px; /* Adjust gap as needed */
+    margin-top: 25px;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 992px) {
+    .dashboard-grid-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid-container {
+        grid-template-columns: 1fr; /* 1 column on small screens */
+    }
+}
+
+/* Video Player Wrapper */
+.video-player-wrapper {
+    width: 50%; /* Increased width */
+    margin-left: 0; /* Move to left */
+    margin-right: auto; /* Push to left */
+}
+
+/* Compact layout for specific files (e.g., V2): lower the benefits panel and player heights */
+body.v2-compact .benefits-table-container {
+    height: 100px;
+}
+body.v2-compact .plyr,
+body.v2-compact #videoPlayer {
+    height: 100px !important;
+}
+
+/* Benefits Table */
+.benefits-table-container {
+    height: 240px; /* Increased to double current view size */
+    overflow-y: auto;
+    position: relative;
+}
+
+.benefits-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; /* Restore original spacing for table view */
+    font-size: 0.9em;
+}
+
+/* Reduce padding on the video player card to free vertical space */
+.video-player-card {
+    padding-top: 10px !important;
+}
+
+.benefits-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+
+.benefits-table th,
+.benefits-table td {
+    padding: 10px 12px;
+    border: 1px solid #e9ecef;
+    text-align: left;
+}
+
+.benefits-table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.benefits-table tbody tr:nth-child(even) {
+    background-color: #fefefe;
+}
+
+.benefits-table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+.video-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.video-details-header .header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.filter-container {
+    display: flex;
+    gap: 10px;
+}
+
