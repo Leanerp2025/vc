@@ -124,13 +124,13 @@ document.addEventListener('DOMContentLoaded', function () {
     loadVideosForContentPage();
 
     function adjustPlayerHeight() {
-        const benefitsTableContainer = document.querySelector('.benefits-table-container');
+        const improvementsCard = document.querySelector('.new-table-card');
         const videoPlayerElement = document.getElementById('videoPlayer');
         const plyrContainer = document.querySelector('.plyr');
 
-        if (benefitsTableContainer && videoPlayerElement) {
+        if (improvementsCard && videoPlayerElement) {
             const setPlayerHeight = () => {
-                const tableHeight = benefitsTableContainer.offsetHeight;
+                const tableHeight = improvementsCard.offsetHeight;
                 if (tableHeight > 0) {
                     videoPlayerElement.style.height = `${tableHeight}px`;
                     if (plyrContainer) {
@@ -147,10 +147,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Observe changes in the Possible Improvements table to keep the player height in sync
-    const benefitsContainerForObserver = document.querySelector('.benefits-table-container');
-    if (benefitsContainerForObserver) {
+    const improvementsContainerForObserver = document.querySelector('.improvements-table-container');
+    if (improvementsContainerForObserver) {
         const observer = new MutationObserver(() => adjustPlayerHeight());
-        observer.observe(benefitsContainerForObserver, { childList: true, subtree: true });
+        observer.observe(improvementsContainerForObserver, { childList: true, subtree: true });
     }
 
     function loadVideoAndDetails(videoId, videoName) {
@@ -228,11 +228,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             fetch(`fetch_possible_improvements.php?video_id=${videoId}`)
                                 .then(response => response.json())
                                 .then(improvementsData => {
-                                    const benefitsTableBody = document.querySelector('.benefits-table tbody');
-                                    benefitsTableBody.innerHTML = '';
+                                    const improvementsTableBody = document.getElementById('improvementsTableBody');
+                                    improvementsTableBody.innerHTML = '';
                                     if (improvementsData.success) {
                                         improvementsData.improvements.forEach(imp => {
-                                            const newRow = benefitsTableBody.insertRow();
+                                            const newRow = improvementsTableBody.insertRow();
                                             newRow.dataset.id = imp.id;
 
                                             let optionsHtml = '';
@@ -442,10 +442,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const addRowBenefitsBtn = document.getElementById('addRowBenefitsBtn');
-    const benefitsTableBody = document.querySelector('.benefits-table tbody');
+    const improvementsTableBody = document.getElementById('improvementsTableBody');
     if (addRowBenefitsBtn) {
         addRowBenefitsBtn.addEventListener('click', function() {
-            const newRow = benefitsTableBody.insertRow();
+            const newRow = improvementsTableBody.insertRow();
             newRow.dataset.id = null;
 
             let optionsHtml = '';
@@ -464,14 +464,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td><input type="text" class="form-control" name="cycle_number" placeholder="Cycle#"></td>
                 <td><input type="text" class="form-control" name="improvement" placeholder="Improvement"></td>
                 <td><input type="text" class="form-control" name="type_of_benefits" placeholder="Benefits"></td>
-                <td><button class="btn-danger delete-row-btn">Delete</button></td>
+                <td><button class="btn-danger delete-row-btn" data-id="${newRow.dataset.id}">Delete</button></td>
             `;
             adjustPlayerHeight();
         });
     }
 
-    if (benefitsTableBody) {
-        benefitsTableBody.addEventListener('click', function(event) {
+    if (improvementsTableBody) {
+        improvementsTableBody.addEventListener('click', function(event) {
             const target = event.target;
             if (target.classList.contains('delete-row-btn')) {
                 const row = target.closest('tr');
@@ -515,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const allImprovements = [];
-            const rows = benefitsTableBody.querySelectorAll('tr');
+            const rows = improvementsTableBody.querySelectorAll('tr');
             let allFilled = true;
 
             rows.forEach(row => {
@@ -629,5 +629,157 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial load with default sorting
     loadVideosForContentPage(currentSortBy, currentSortOrder);
+
+    // Possible Improvements Section Functionality
+    const improvementsAddRow = document.getElementById('improvementsAddRow');
+    const improvementsSaveAll = document.getElementById('improvementsSaveAll');
+
+
+
+    if (improvementsAddRow && improvementsTableBody) {
+        // Add row functionality
+        improvementsAddRow.addEventListener('click', function () {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <select class="form-control" name="video_detail_id" style="width: 100%;">
+                        <option value="">Select ID</option>
+                    </select>
+                </td>
+                <td><input type="text" class="form-control" name="cycle" placeholder="Cycle"></td>
+                <td><input type="text" class="form-control" name="improvement" placeholder="Describe improvement"></td>
+                <td><input type="text" class="form-control" name="benefit" placeholder="Benefit"></td>
+                <td>
+                    <button class="icon-btn delete-row-btn" title="Delete Row">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </td>
+            `;
+            improvementsTableBody.appendChild(row);
+            
+            // Populate the dropdown with video detail IDs
+            const dropdown = row.querySelector('select[name="video_detail_id"]');
+            populateVideoDetailDropdown(dropdown);
+            
+            updateImprovementsRowNumbers();
+        });
+    }
+
+    if (improvementsTableBody) {
+        // Delete row functionality
+        improvementsTableBody.addEventListener('click', function (e) {
+            if (e.target.closest('.delete-row-btn')) {
+                e.target.closest('tr').remove();
+                updateImprovementsRowNumbers();
+            }
+        });
+    }
+
+    if (improvementsSaveAll && improvementsTableBody) {
+        // Save all functionality
+        improvementsSaveAll.addEventListener('click', function () {
+            const rows = improvementsTableBody.querySelectorAll('tr');
+            const data = [];
+            let valid = true;
+            
+            rows.forEach((row, idx) => {
+                const videoDetailId = row.querySelector('select[name="video_detail_id"]')?.value || '';
+                const cycle = row.querySelector('input[name="cycle"]')?.value.trim() || '';
+                const improvement = row.querySelector('input[name="improvement"]')?.value.trim() || '';
+                const benefit = row.querySelector('input[name="benefit"]')?.value.trim() || '';
+                
+                if (!videoDetailId || !cycle || !improvement || !benefit) {
+                    valid = false;
+                    row.style.background = '#fff3cd';
+                } else {
+                    row.style.background = '';
+                    data.push({ 
+                        video_detail_id: videoDetailId,
+                        cycle, 
+                        improvement, 
+                        benefit,
+                        video_id: currentVideoId || null
+                    });
+                }
+            });
+            
+            if (!valid) {
+                alert('Please fill all fields in every row including selecting an ID.');
+                return;
+            }
+            
+            if (data.length === 0) {
+                alert('No data to save.');
+                return;
+            }
+            
+            // Save to backend
+            fetch('save_possible_improvement.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ improvements: data })
+            })
+            .then(r => r.json())
+            .then(resp => {
+                if (resp.success) {
+                    alert('Improvements saved successfully!');
+                } else {
+                    alert('Error saving: ' + (resp.error || 'Unknown error'));
+                }
+            })
+            .catch(err => {
+                console.error('Save error:', err);
+                alert('Network error while saving.');
+            });
+        });
+    }
+
+    function updateImprovementsRowNumbers() {
+        if (improvementsTableBody) {
+            improvementsTableBody.querySelectorAll('tr').forEach((row, idx) => {
+                // First column is now a dropdown, so we don't need to update row numbers
+                // Row numbers are handled by the table structure
+            });
+        }
+    }
+
+    // Function to populate video detail dropdown
+    function populateVideoDetailDropdown(dropdown) {
+        if (!dropdown) return;
+        
+        console.log('Populating video detail dropdown...');
+        
+        fetch('fetch_video_detail_ids.php')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Video detail data received:', data);
+                if (data.success && data.video_details) {
+                    // Clear existing options except the first one
+                    dropdown.innerHTML = '<option value="">Select ID</option>';
+                    
+                    // Add options from fetched data
+                    data.video_details.forEach(detail => {
+                        const option = document.createElement('option');
+                        option.value = detail.id;
+                        option.textContent = detail.id;
+                        dropdown.appendChild(option);
+                    });
+                    
+                    console.log(`Populated dropdown with ${data.video_details.length} options`);
+                } else {
+                    console.error('Failed to fetch video detail IDs:', data.error);
+                    dropdown.innerHTML = '<option value="">No IDs available</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching video detail IDs:', error);
+                dropdown.innerHTML = '<option value="">Error loading IDs</option>';
+            });
+    }
 
     });

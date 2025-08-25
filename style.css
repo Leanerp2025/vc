@@ -590,81 +590,223 @@ body {
 
 /* Video Player Wrapper */
 .video-player-wrapper {
-    width: 50%; /* Increased width */
+    width: 45%; /* Reduced width to better proportion with reduced height */
     margin-left: 0; /* Move to left */
     margin-right: auto; /* Push to left */
 }
 
-/* Compact layout for specific files (e.g., V2): lower the benefits panel and player heights */
-body.v2-compact .benefits-table-container {
-    height: 100px;
-}
-body.v2-compact .plyr,
-body.v2-compact #videoPlayer {
-    height: 100px !important;
+/* ===== POSSIBLE IMPROVEMENTS SECTION - CLEAN VERSION ===== */
+
+/* ===== POSSIBLE IMPROVEMENTS SECTION - CLEAN VERSION ===== */
+.possible-improvements-card {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    overflow: hidden;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-/* Benefits Table */
-.benefits-table-container {
-    height: 240px; /* Increased to double current view size */
-    overflow-y: auto;
-    position: relative;
+.improvements-header {
+    margin: 0 !important;
+    padding: 2px 18px 0 18px !important;
+    background: #fff;
+    flex-shrink: 0;
 }
 
-.benefits-table {
+.improvements-header h2 {
+    font-size: 1.1em;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-weight: 600;
+    color: #333;
+    line-height: 1 !important;
+    border: none !important;
+}
+
+.improvements-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: #1976d2;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.icon-btn:hover {
+    background: #e3f2fd;
+}
+
+.improvements-table-container {
+    margin: 0 18px 0 18px !important;
+    padding: 0 !important;
+    border-radius: 6px;
+    border: 1px solid #f0f0f0;
+    background: #fafbfc;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.improvements-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px; /* Restore original spacing for table view */
-    font-size: 0.9em;
+    font-size: 0.97em;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 1;
 }
 
-/* Reduce padding on the video player card to free vertical space */
-.video-player-card {
-    padding-top: 10px !important;
+.improvements-table thead {
+    background: #f5f5f5;
 }
 
-.benefits-table thead th {
+.improvements-table th {
+    padding: 4px 8px !important;
+    text-align: left;
+    border-bottom: 1px solid #ececec;
+    font-weight: 600;
+    color: #495057;
     position: sticky;
     top: 0;
     z-index: 1;
+    margin: 0 !important;
 }
 
-
-.benefits-table th,
-.benefits-table td {
-    padding: 10px 12px;
-    border: 1px solid #e9ecef;
+.improvements-table td {
+    padding: 2px 6px !important;
     text-align: left;
+    border-bottom: 1px solid #ececec;
+    margin: 0 !important;
+    vertical-align: top;
 }
 
-.benefits-table th {
+.improvements-table tbody {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.improvements-table tbody tr {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.improvements-table tbody tr:last-child td {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 2px !important;
+}
+
+.improvements-table tbody tr:nth-child(even) {
     background-color: #f8f9fa;
-    color: #495057;
-    font-weight: 600;
-    text-transform: uppercase;
 }
 
-.benefits-table tbody tr:nth-child(even) {
-    background-color: #fefefe;
+.improvements-table tbody tr:hover {
+    background-color: #e9ecef;
 }
 
-.benefits-table tbody tr:hover {
-    background-color: #f1f3f5;
+/* Form inputs */
+.possible-improvements-card input[type="text"] {
+    width: 100%;
+    padding: 2px 4px !important;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    margin: 0 !important;
 }
 
-.video-details-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.possible-improvements-card select {
+    width: 100%;
+    padding: 2px 4px !important;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    background-color: #fff;
+    cursor: pointer;
+    margin: 0 !important;
 }
 
-.video-details-header .header-actions {
-    display: flex;
-    align-items: center;
+.possible-improvements-card select:focus,
+.possible-improvements-card input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.filter-container {
-    display: flex;
-    gap: 10px;
+/* Delete button */
+.possible-improvements-card .delete-row-btn {
+    color: #dc3545;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    margin: 0 !important;
+}
+
+.possible-improvements-card .delete-row-btn:hover {
+    background: #f8d7da;
+}
+
+/* Ensure no extra spacing anywhere */
+.possible-improvements-card * {
+    box-sizing: border-box;
+}
+
+.possible-improvements-card > * {
+    margin: 0 !important;
+}
+
+.possible-improvements-card > *:not(:last-child) {
+    margin-bottom: 0 !important;
+}
+
+#improvementsTableBody:empty {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Final spacing control - ensure table fits content exactly */
+.improvements-table {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+}
+
+.improvements-table tbody {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+}
+
+/* Remove any potential flexbox gaps */
+.possible-improvements-card {
+    gap: 0 !important;
+}
+
+.improvements-table-container {
+    gap: 0 !important;
 }
 

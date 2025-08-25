@@ -223,12 +223,12 @@ function handle_list_organizations($conn) {
 }
 
 function handle_add_folder($conn) {
-    if (empty($_POST['folderName']) || empty($_POST['organizationId'])) {
-        echo json_encode(['success' => false, 'error' => 'Folder name and organization are required.']);
+    if (empty($_POST['folderName'])) {
+        echo json_encode(['success' => false, 'error' => 'Folder name is required.']);
         exit;
     }
     $folderName = $_POST['folderName'];
-    $organizationId = $_POST['organizationId'];
+    $organizationId = !empty($_POST['organizationId']) ? $_POST['organizationId'] : null;
 
     $stmt = $conn->prepare("INSERT INTO folders (name, organization_id) VALUES (?, ?)");
     $stmt->bind_param("si", $folderName, $organizationId);

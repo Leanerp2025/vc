@@ -15,7 +15,7 @@ if (!isset($_SESSION['loggedin'])) {
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
-    <link rel="stylesheet" href="dashboard_styles.css">
+    <!-- dashboard_styles.css removed - not needed -->
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 </head>
 <body>
@@ -33,29 +33,35 @@ if (!isset($_SESSION['loggedin'])) {
                                 Your browser does not support the video tag.
                             </video>
                         </div>
-                        <div class="card new-table-card" style="flex: 1;">
-                            <div class="video-details-header">
+                        
+                        <!-- Possible Improvements Section -->
+                        <div class="card possible-improvements-card" style="flex: 1; min-width: 300px;">
+                            <div class="improvements-header">
                                 <h2>Possible Improvements</h2>
-                                <div class="header-actions">
-                                    <button id="addRowBenefitsBtn" class="btn-primary btn-small">Add Row</button>
-                                    <button id="saveAllBenefitsBtn" class="btn-primary btn-small" style="margin-left: 10px;">Save All Details</button>
+                                <div class="improvements-actions">
+                                    <button id="improvementsAddRow" class="icon-btn" title="Add Row">
+                                        <span class="material-symbols-outlined">add</span>
+                                    </button>
+                                    <button id="improvementsSaveAll" class="icon-btn" title="Save All">
+                                        <span class="material-symbols-outlined">check</span>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="benefits-table-container">
-                            <table class="benefits-table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 15%;">ID</th>
-                                        <th>Cycle#</th>
-                                        <th>Improvement</th>
-                                        <th>Benefits</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Table rows will be added here -->
-                                </tbody>
-                            </table>
+                            <div class="improvements-table-container">
+                                <table class="improvements-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:15%;">Id</th>
+                                            <th style="width:20%;">Cycle #</th>
+                                            <th style="width:35%;">Improvement</th>
+                                            <th style="width:20%;">Benefit</th>
+                                            <th style="width:10%;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="improvementsTableBody">
+                                        <!-- Dynamic rows go here -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -83,8 +89,12 @@ if (!isset($_SESSION['loggedin'])) {
                         </table>
                         </div>
                         <div class="save-details-button-container">
-                            <button id="addRowBtn" class="btn-primary btn-small">Add Row</button>
-                            <button id="saveAllDetailsBtn" class="btn-primary btn-small" style="margin-left: 10px;">Save All Details</button>
+                            <button id="addRowBtn" class="btn-primary btn-small" title="Add Row">
+                                <span class="material-symbols-outlined">add</span>
+                            </button>
+                            <button id="saveAllDetailsBtn" class="btn-primary btn-small" style="margin-left: 10px;" title="Save All Details">
+                                <span class="material-symbols-outlined">check</span>
+                            </button>
                         </div>
                     </section>
                 </div>
