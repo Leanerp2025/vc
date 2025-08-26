@@ -62,7 +62,6 @@ function handle_add_video($conn) {
             exit;
         }
         $videoName = $_POST['videoName'];
-        $folderId = !empty($_POST['folderId']) ? $_POST['folderId'] : null;
 
         $videoPath = null; // Initialize videoPath
 
@@ -104,9 +103,9 @@ function handle_add_video($conn) {
             $fileSize = null;
         }
 
-        // Insert video name, folder_id, video_path and file_size into database
-        $stmt = $conn->prepare("INSERT INTO videos (name, folder_id, video_path, file_size) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("sisi", $videoName, $folderId, $videoPath, $fileSize);
+        // Insert video name, video_path and file_size into database
+        $stmt = $conn->prepare("INSERT INTO videos (name, video_path, file_size) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $videoName, $videoPath, $fileSize);
 
         if ($stmt->execute()) {
             $newVideoId = $conn->insert_id;
@@ -197,29 +196,15 @@ function handle_add_organization($conn) {
 }
 
 function handle_list_organizations($conn) {
-    $sql = "SELECT o.id AS org_id, o.name AS org_name, f.id AS folder_id, f.name AS folder_name
-            FROM organizations o
-            LEFT JOIN folders f ON o.id = f.organization_id
-            ORDER BY o.id, f.id";
-    $result = $conn->query($sql);
+    $result = $conn->query("SELECT id, name FROM organizations ORDER BY name ASC");
     $organizations = [];
     while ($row = $result->fetch_assoc()) {
-        $org_id = $row['org_id'];
-        if (!isset($organizations[$org_id])) {
-            $organizations[$org_id] = [
-                'id' => $org_id,
-                'name' => $row['org_name'],
-                'folders' => []
-            ];
-        }
-        if ($row['folder_id']) {
-            $organizations[$org_id]['folders'][] = [
-                'id' => $row['folder_id'],
-                'name' => $row['folder_name']
-            ];
-        }
+        $organizations[] = [
+            'id' => $row['id'],
+            'name' => $row['name']
+        ];
     }
-    echo json_encode(array_values($organizations));
+    echo json_encode($organizations);
 }
 
 function handle_add_folder($conn) {
@@ -227,12 +212,11 @@ function handle_add_folder($conn) {
         echo json_encode(['success' => false, 'error' => 'Folder name is required.']);
         exit;
     }
+    
     $folderName = $_POST['folderName'];
-    $organizationId = !empty($_POST['organizationId']) ? $_POST['organizationId'] : null;
-
-    $stmt = $conn->prepare("INSERT INTO folders (name, organization_id) VALUES (?, ?)");
-    $stmt->bind_param("si", $folderName, $organizationId);
-
+    $stmt = $conn->prepare("INSERT INTO folders (name) VALUES (?)");
+    $stmt->bind_param("s", $folderName);
+    
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Folder added successfully.']);
     } else {
@@ -242,63 +226,15 @@ function handle_add_folder($conn) {
 }
 
 function handle_list_folders($conn) {
-    $sql = "SELECT f.id AS folder_id, f.name AS folder_name, v.id as video_id, v.name AS video_name
-            FROM folders f
-            LEFT JOIN videos v ON f.id = v.folder_id
-            ORDER BY f.id, v.id";
-    $result = $conn->query($sql);
+    $result = $conn->query("SELECT id, name FROM folders ORDER BY name ASC");
     $folders = [];
     while ($row = $result->fetch_assoc()) {
-        $folder_id = $row['folder_id'];
-        if (!isset($folders[$folder_id])) {
-            $folders[$folder_id] = [
-                'id' => $folder_id,
-                'name' => $row['folder_name'],
-                'videos' => []
-            ];
-        }
-        if ($row['video_id']) {
-            $folders[$folder_id]['videos'][] = [
-                'id' => $row['video_id'],
-                'name' => $row['video_name']
-            ];
-        }
+        $folders[] = [
+            'id' => $row['id'],
+            'name' => $row['name']
+        ];
     }
-    echo json_encode(['success' => true, 'data' => array_values($folders)]);
-}
-
-function handle_list_folders_by_organization($conn) {
-    $organization_id = $_GET['organization_id'] ?? null;
-    if (!$organization_id) {
-        echo json_encode(['success' => false, 'error' => 'No organization ID provided.']);
-        exit;
-    }
-    $stmt = $conn->prepare("SELECT id, name FROM folders WHERE organization_id = ? ORDER BY name ASC");
-    $stmt->bind_param("i", $organization_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $folders = [];
-    while ($row = $result->fetch_assoc()) {
-        $folders[] = $row;
-    }
-    echo json_encode($folders);
-}
-
-function handle_list_videos_by_folder($conn) {
-    $folder_id = $_GET['folder_id'] ?? null;
-    if (!$folder_id) {
-        echo json_encode(['success' => false, 'error' => 'No folder ID provided.']);
-        exit;
-    }
-    $stmt = $conn->prepare("SELECT id, video_path FROM videos WHERE folder_id = ? ORDER BY id DESC");
-    $stmt->bind_param("i", $folder_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $videos = [];
-    while ($row = $result->fetch_assoc()) {
-        $videos[] = $row;
-    }
-    echo json_encode($videos);
+    echo json_encode(['success' => true, 'data' => $folders]);
 }
 
 $action = $_REQUEST['action'] ?? '';
@@ -327,12 +263,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
         case 'list_folders':
             handle_list_folders($conn);
-            break;
-        case 'list_folders_by_organization':
-            handle_list_folders_by_organization($conn);
-            break;
-        case 'list_videos_by_folder':
-            handle_list_videos_by_folder($conn);
             break;
         case 'delete':
             handle_delete($conn);

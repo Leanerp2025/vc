@@ -650,8 +650,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td><input type="text" class="form-control" name="improvement" placeholder="Describe improvement"></td>
                 <td><input type="text" class="form-control" name="benefit" placeholder="Benefit"></td>
                 <td>
-                    <button class="icon-btn delete-row-btn" title="Delete Row">
-                        <span class="material-symbols-outlined">delete</span>
+                    <button class="delete-row-btn" title="Delete Row" style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em;">
+                        Delete
                     </button>
                 </td>
             `;

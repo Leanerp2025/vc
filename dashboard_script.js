@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const videoCapturesList = document.getElementById('videoCapturesList');
 
     const folderOrganizationSelect = document.getElementById('folderOrganization');
-    const videoFolderSelect = document.getElementById('videoFolder');
 
     // Modal helpers
     function openModal(modal) {
@@ -45,41 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.target === addItemModal) closeModal(addItemModal);
     };
 
-    function populateOrganizationsDropdown() {
-        fetch('upload.php?action=list_organizations')
-            .then(response => response.json())
-            .then(data => {
-                folderOrganizationSelect.innerHTML = '<option value="">-- Select Organization --</option>';
-                if (data.length > 0) {
-                    data.forEach(org => {
-                        const option = document.createElement('option');
-                        option.value = org.id;
-                        option.textContent = org.name;
-                        folderOrganizationSelect.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading organizations for dropdown:', error));
-    }
-
-    function populateFoldersDropdown() {
-        if (!videoFolderSelect) return; // Folder selection removed from UI
-        fetch('upload.php?action=list_folders')
-            .then(response => response.json())
-            .then(data => {
-                videoFolderSelect.innerHTML = '<option value="">-- Select Folder --</option>';
-                if (data.success && data.data.length > 0) {
-                    data.data.forEach(folder => {
-                        const option = document.createElement('option');
-                        option.value = folder.id;
-                        option.textContent = folder.name;
-                        videoFolderSelect.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading folders for dropdown:', error));
-    }
-
     // Show/hide forms based on selection and populate dropdowns
     itemTypeSelect.addEventListener('change', function() {
         organizationFormDiv.style.display = 'none';
@@ -89,10 +53,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (this.value === 'organization') {
             organizationFormDiv.style.display = 'block';
         } else if (this.value === 'folder') {
-            populateOrganizationsDropdown();
             folderFormDiv.style.display = 'block';
         } else if (this.value === 'video') {
-            if (videoFolderSelect) populateFoldersDropdown();
             videoFormDiv.style.display = 'block';
         }
     });

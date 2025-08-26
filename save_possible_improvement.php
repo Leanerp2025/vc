@@ -40,7 +40,7 @@ try {
         }
         
         // Insert into possible_improvements table
-        $stmt = $conn->prepare("INSERT INTO possible_improvements (video_detail_id, cycle_number, improvement, type_of_benefits, video_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+        $stmt = $conn->prepare("INSERT INTO possible_improvements (video_detail_id, cycle_number, improvement, type_of_benefits, video_id) VALUES (?, ?, ?, ?, ?)");
         
         if (!$stmt) {
             $errors[] = 'Database prepare error: ' . $conn->error;

@@ -22,20 +22,20 @@ if (!isset($_SESSION['loggedin'])) {
     <?php include 'header.php'; ?>
     <main class="container content-main-container">
         <div class="main-content-wrapper" style="display: flex; flex-direction: column; gap: 25px;">
-            <section class="dashboard-content" style="display: flex; flex-direction: row; gap: 25px; align-items: flex-start;">
-                <div class="video-player-card card" style="padding-bottom: 0; padding-left: 25px; padding-right: 25px; flex: 2;">
+            <section class="dashboard-content" style="display: flex; flex-direction: row; gap: 15px; align-items: flex-start;">
+                <div class="video-player-card card" style="padding-bottom: 0; padding-left: 25px; padding-right: 25px; flex: 1.5;">
                     
                     <h2>Now Playing</h2>
-                    <div style="display: flex; flex-direction: row; gap: 20px;">
-                        <div class="video-player-wrapper">
-                            <video id="videoPlayer" controls>
+                    <div style="display: flex; flex-direction: row; gap: 8px; align-items: stretch; height: 280px;">
+                        <div class="video-player-wrapper" style="flex: 1;">
+                            <video id="videoPlayer" controls style="height: 100%; width: 100%; object-fit: cover;">
                                 <source id="videoSource" src="" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
                         
                         <!-- Possible Improvements Section -->
-                        <div class="card possible-improvements-card" style="flex: 1; min-width: 300px;">
+                        <div class="card possible-improvements-card" style="flex: 1; min-width: 350px; max-width: none; display: flex; flex-direction: column; overflow: hidden;">
                             <div class="improvements-header">
                                 <h2>Possible Improvements</h2>
                                 <div class="improvements-actions">
@@ -47,15 +47,15 @@ if (!isset($_SESSION['loggedin'])) {
                                     </button>
                                 </div>
                             </div>
-                            <div class="improvements-table-container">
+                            <div class="improvements-table-container" style="flex-grow: 1; overflow-y: auto;">
                                 <table class="improvements-table">
                                     <thead>
                                         <tr>
-                                            <th style="width:15%;">Id</th>
-                                            <th style="width:20%;">Cycle #</th>
+                                            <th style="width:12%;">Id</th>
+                                            <th style="width:18%;">Cycle #</th>
                                             <th style="width:35%;">Improvement</th>
-                                            <th style="width:20%;">Benefit</th>
-                                            <th style="width:10%;">Actions</th>
+                                            <th style="width:22%;">Benefit</th>
+                                            <th style="width:13%;">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="improvementsTableBody">

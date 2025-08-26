@@ -595,6 +595,13 @@ body {
     margin-right: auto; /* Push to left */
 }
 
+.video-player-wrapper video#videoPlayer {
+    height: 160px !important;
+    max-height: 160px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
 /* ===== POSSIBLE IMPROVEMENTS SECTION - CLEAN VERSION ===== */
 
 /* ===== POSSIBLE IMPROVEMENTS SECTION - CLEAN VERSION ===== */
@@ -618,9 +625,13 @@ body {
 
 .improvements-header {
     margin: 0 !important;
-    padding: 2px 18px 0 18px !important;
+    padding: 10px 18px 0 18px !important;
     background: #fff;
     flex-shrink: 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .improvements-header h2 {
@@ -636,6 +647,7 @@ body {
 .improvements-actions {
     display: flex;
     gap: 8px;
+    align-items: center;
 }
 
 .icon-btn {
@@ -752,20 +764,29 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-/* Delete button */
+/* Enhanced delete button */
 .possible-improvements-card .delete-row-btn {
-    color: #dc3545;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background 0.2s;
+    background: #dc3545 !important;
+    color: white !important;
+    border: none !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 0.8em !important;
     margin: 0 !important;
+    transition: all 0.2s ease !important;
+    min-width: 50px !important;
+    text-align: center !important;
 }
 
 .possible-improvements-card .delete-row-btn:hover {
-    background: #f8d7da;
+    background: #c53030 !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3) !important;
+}
+
+.possible-improvements-card .delete-row-btn:active {
+    transform: scale(0.95) !important;
 }
 
 /* Ensure no extra spacing anywhere */
@@ -780,6 +801,8 @@ body {
 .possible-improvements-card > *:not(:last-child) {
     margin-bottom: 0 !important;
 }
+
+
 
 #improvementsTableBody:empty {
     display: none !important;
@@ -801,12 +824,236 @@ body {
     max-height: none !important;
 }
 
-/* Remove any potential flexbox gaps */
+/* Minimize gap between video player and improvements */
+.video-player-wrapper {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+}
+
 .possible-improvements-card {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
     gap: 0 !important;
+    border-radius: 8px !important;
+    max-width: none !important;
+    min-width: 350px !important;
+    flex: 1 !important;
 }
 
 .improvements-table-container {
     gap: 0 !important;
 }
 
+/* Ensure tight layout */
+.dashboard-content > div {
+    margin: 0 !important;
+}
+
+.video-player-card {
+    margin-right: 0 !important;
+}
+
+/* Video player wrapper equal width */
+.video-player-wrapper {
+    flex: 1 !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Ensure both sections get equal width */
+.video-player-wrapper,
+.possible-improvements-card {
+    flex: 1 !important;
+    width: 50% !important;
+}
+
+/* Ensure proper sticky header behavior */
+.improvements-table thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5f5f5 !important;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+/* Enable scrolling for table body */
+.improvements-table tbody {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    display: block !important;
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.improvements-table thead tr {
+    display: table !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+}
+
+.improvements-table tbody tr {
+    display: table !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+}
+
+/* Smooth scrolling for table body */
+.improvements-table tbody::-webkit-scrollbar {
+    width: 6px;
+}
+
+.improvements-table tbody::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.improvements-table tbody::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.improvements-table tbody::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Ensure all form elements respect column boundaries */
+.possible-improvements-card input[type="text"],
+.possible-improvements-card select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 4px 6px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    font-size: 0.85em !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Specific width control for each column */
+.improvements-table th:nth-child(1),
+.improvements-table td:nth-child(1) {
+    width: 12% !important;
+    min-width: 80px !important;
+    max-width: 100px !important;
+}
+
+.improvements-table th:nth-child(2),
+.improvements-table td:nth-child(2) {
+    width: 18% !important;
+    min-width: 100px !important;
+    max-width: 120px !important;
+}
+
+.improvements-table th:nth-child(3),
+.improvements-table td:nth-child(3) {
+    width: 35% !important;
+    min-width: 150px !important;
+}
+
+.improvements-table th:nth-child(4),
+.improvements-table td:nth-child(4) {
+    width: 22% !important;
+    min-width: 100px !important;
+}
+
+.improvements-table th:nth-child(5),
+.improvements-table td:nth-child(5) {
+    width: 13% !important;
+    min-width: 60px !important;
+    max-width: 80px !important;
+}
+
+/* Table layout control */
+.improvements-table {
+    table-layout: fixed !important;
+}
+
+/* Add vertical column separators for cleaner representation */
+.improvements-table th {
+    border-right: 2px solid #dee2e6 !important;
+    position: relative !important;
+}
+
+.improvements-table th:last-child {
+    border-right: none !important;
+}
+
+.improvements-table td {
+    border-right: 1px solid #e0e0e0 !important;
+    position: relative !important;
+}
+
+.improvements-table td:last-child {
+    border-right: none !important;
+}
+
+/* Enhanced column separators with subtle shadows */
+.improvements-table th::after,
+.improvements-table td::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, #d0d0d0, transparent);
+    pointer-events: none;
+}
+
+.improvements-table th:last-child::after,
+.improvements-table td:last-child::after {
+    display: none;
+}
+
+/* Improve table header styling with better borders */
+.improvements-table thead {
+    background: #f5f5f5;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+.improvements-table th {
+    padding: 4px 8px !important;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin: 0 !important;
+    background: #f8f9fa !important;
+}
+
+/* Enhanced table body styling */
+.improvements-table td {
+    padding: 2px 6px !important;
+    text-align: left;
+    border-bottom: 1px solid #ececec;
+    margin: 0 !important;
+    vertical-align: top;
+    background: #ffffff !important;
+}
+
+/* Row styling with better visual separation */
+.improvements-table tbody tr:nth-child(even) {
+    background-color: #fafbfc !important;
+}
+
+.improvements-table tbody tr:nth-child(even) td {
+    background-color: #fafbfc !important;
+}
+
+.improvements-table tbody tr:hover {
+    background-color: #f0f8ff !important;
+}
+
+.improvements-table tbody tr:hover td {
+    background-color: #f0f8ff !important;
+}
+
+/* Ensure Plyr video player fills its container height */
+.plyr, .plyr__video-wrapper {
+    height: 100% !important;
+}
