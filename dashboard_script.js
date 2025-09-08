@@ -115,12 +115,23 @@ document.addEventListener('DOMContentLoaded', function () {
     // Handle Add Video form submission
     addVideoForm.addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // Prevent multiple submissions
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn.disabled) {
+            return;
+        }
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating...';
+        
         const formData = new FormData();
         formData.append('action', 'add_video');
         // Create name-only entry; no file included
         const videoNameInput = document.getElementById('videoName');
         if (!videoNameInput || !videoNameInput.value.trim()) {
             alert('Please enter a video name.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Add Video Name';
             return;
         }
         formData.append('videoName', videoNameInput.value.trim());
@@ -134,14 +145,21 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.success) {
                 alert(data.message);
                 closeModal(addItemModal);
+                // Refresh video list before redirecting
+                loadVideoCaptures();
+                // Redirect to content.php to upload the video file
                 window.location.href = `content.php?video_id=${data.video_id}&video_name=${encodeURIComponent(data.video_name)}`;
             } else {
                 alert('Error adding video: ' + data.error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add Video Name';
             }
         })
         .catch(error => {
             console.error('Fetch error:', error);
             alert('An error occurred while adding the video. Check console for details: ' + error.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Add Video Name';
         });
     });
 
@@ -241,9 +259,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     div.className = 'item-card';
                     const videoDisplayName = video.name;
 
+                    const hasFile = video.file_size && video.file_size > 0;
+                    const fileStatus = hasFile ? 
+                        '<span class="material-symbols-outlined" style="color: #28a745; font-size: 16px;" title="Video file uploaded">check_circle</span>' : 
+                        '';
+                    
                     div.innerHTML = `
                         <div class="item-card-header">
-                            <span class="file-name">${videoDisplayName}</span>
+                            <span class="file-name">${videoDisplayName} ${fileStatus}</span>
                             <div class="item-card-actions">
                                 <a href="content.php?video_id=${video.id}&video_name=${encodeURIComponent(video.name)}" class="arrow-icon" title="Open"><span class="material-symbols-outlined">arrow_forward</span></a>
                                 <button class="delete-btn" data-id="${video.id}" data-type="video" title="Delete">

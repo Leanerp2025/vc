@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 $conn = require 'db.php';
 
 function get_video_by_id($id, $conn) {
-    $stmt = $conn->prepare("SELECT id, video_path FROM videos WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, name FROM videos WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -26,9 +26,7 @@ function handle_delete($conn) {
 
     if ($video) {
         // Delete file from server
-        if (file_exists($video['video_path'])) {
-            unlink($video['video_path']);
-        }
+            // File deletion logic removed since we no longer store video_path
 
         // Delete record from database
         $stmt = $conn->prepare("DELETE FROM videos WHERE id = ?");
@@ -45,7 +43,7 @@ function handle_delete($conn) {
 }
 
 function handle_list_videos($conn) {
-    $result = $conn->query("SELECT id, video_path FROM videos ORDER BY id DESC");
+    $result = $conn->query("SELECT id, name FROM videos ORDER BY id DESC");
     $videos = [];
     while ($row = $result->fetch_assoc()) {
         $videos[] = $row;
@@ -61,61 +59,36 @@ function handle_add_video($conn) {
             echo json_encode(['success' => false, 'error' => 'Video name cannot be empty.']);
             exit;
         }
-        $videoName = $_POST['videoName'];
+        $videoName = trim($_POST['videoName']);
 
-        $videoPath = null; // Initialize videoPath
-
-        // Handle video file upload if present
-        if (isset($_FILES['video']) && is_array($_FILES['video']) && isset($_FILES['video']['error']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
-            $fileTmpPath = $_FILES['video']['tmp_name'];
-            $fileName = $_FILES['video']['name'];
-            $fileSize = isset($_FILES['video']['size']) ? (int)$_FILES['video']['size'] : null;
-            $fileType = $_FILES['video']['type'];
-            $fileNameCmps = explode(".", $fileName);
-            $fileExtension = strtolower(end($fileNameCmps));
-
-            $allowedfileExtensions = ['mp4', 'webm', 'ogg']; // Add other allowed video formats
-            if (!in_array($fileExtension, $allowedfileExtensions)) {
-                echo json_encode(['success' => false, 'error' => 'Invalid video file type. Only MP4, WebM, Ogg are allowed.']);
-                exit;
-            }
-
-            $uploadDir = realpath(__DIR__ . '/uploads_secure');
-            if ($uploadDir === false) {
-                echo json_encode(['success' => false, 'error' => 'Server configuration error: Upload directory not found.']);
-                exit;
-            }
-
-            // Generate a unique file name to prevent overwrites and security issues
-            $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
-            $destPath = $uploadDir . DIRECTORY_SEPARATOR . $newFileName;
-
-            if (move_uploaded_file($fileTmpPath, $destPath)) {
-                $videoPath = $newFileName; // Store only the filename relative to uploads_secure
-                error_log("handle_add_video: File uploaded successfully to " . $destPath);
-            } else {
-                echo json_encode(['success' => false, 'error' => 'Failed to move uploaded file.']);
-                exit;
-            }
-        } else {
-            // Name-only creation path
-            $videoPath = null;
-            $fileSize = null;
+        // Only create video name entry - no file upload at this stage
+        // File will be uploaded later in content.php
+        
+        // Check if video with this name already exists
+        $checkStmt = $conn->prepare("SELECT id FROM videos WHERE name = ?");
+        $checkStmt->bind_param("s", $videoName);
+        $checkStmt->execute();
+        $result = $checkStmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $checkStmt->close();
+            echo json_encode(['success' => false, 'error' => 'A video with this name already exists. Please choose a different name.']);
+            exit;
         }
+        $checkStmt->close();
 
-        // Insert video name, video_path and file_size into database
-        $stmt = $conn->prepare("INSERT INTO videos (name, video_path, file_size) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $videoName, $videoPath, $fileSize);
+        // Insert video name into database (file_size and video_path will be NULL initially)
+        $stmt = $conn->prepare("INSERT INTO videos (name, video_path) VALUES (?, '')");
+        $stmt->bind_param("s", $videoName);
 
         if ($stmt->execute()) {
             $newVideoId = $conn->insert_id;
-            error_log("upload.php: New video entry created with ID = " . $newVideoId . ", name = " . $videoName . ", video_path = " . $videoPath);
+            error_log("upload.php: New video name entry created with ID = " . $newVideoId . ", name = " . $videoName);
             echo json_encode([
                 'success' => true,
-                'message' => 'Video entry created successfully.',
+                'message' => 'Video name created successfully. You can now upload the video file.',
                 'video_id' => $newVideoId,
-                'video_name' => $videoName,
-                'video_path' => $videoPath // Return video_path for client-side use if needed
+                'video_name' => $videoName
             ]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Database error: ' . $stmt->error]);

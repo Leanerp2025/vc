@@ -39,7 +39,7 @@ $conn = require 'db.php';
                 <?php
                 // Fetch all videos
                 $videos = [];
-                $stmt = $conn->prepare("SELECT id, video_path, name FROM videos ORDER BY id ASC");
+                $stmt = $conn->prepare("SELECT id, name, file_size FROM videos ORDER BY id ASC");
                 $stmt->execute();
                 $result = $stmt->get_result();
                 while ($row = $result->fetch_assoc()) {
@@ -53,7 +53,12 @@ $conn = require 'db.php';
                     <?php foreach ($videos as $video): ?>
                         <div class="item-card">
                             <span><?php echo htmlspecialchars(str_replace('_', ' ', $video['name'])); ?></span>
-                            <span class="file-name"><?php echo htmlspecialchars(basename($video['video_path'])); ?></span>
+                            <span class="file-name">
+                                <?php echo htmlspecialchars($video['name']); ?>
+                                <?php if ($video['file_size'] && $video['file_size'] > 0): ?>
+                                    <span class="material-symbols-outlined" style="color: #28a745; font-size: 16px;" title="Video file uploaded">check_circle</span>
+                                <?php endif; ?>
+                            </span>
                             <a href="content.php?video_id=<?php echo htmlspecialchars($video['id']); ?>&video_name=<?php echo htmlspecialchars($video['name']); ?>" class="arrow-icon"><span class="material-symbols-outlined">arrow_forward</span></a>
                         </div>
                     <?php endforeach; ?>

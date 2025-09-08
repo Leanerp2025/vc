@@ -19,41 +19,20 @@ if (!$video_id) {
 error_log("upload_existing_video.php: Received video_id = " . var_export($video_id, true));
 // --- END ADDED LOGGING ---
 
-// --- START: New logic to delete old video file and details ---
+// Prepare paths and keep existing data. Do NOT delete old video until new upload succeeds.
 
-// 1. Get current video path and name
-$old_video_path = null;
+// 1. Get current video name (for response convenience)
 $video_name_from_db = null;
-$stmt_get_old = $conn->prepare("SELECT video_path, name FROM videos WHERE id = ?");
+$stmt_get_old = $conn->prepare("SELECT name FROM videos WHERE id = ?");
 $stmt_get_old->bind_param("i", $video_id);
 $stmt_get_old->execute();
 $result_old = $stmt_get_old->get_result();
 if ($row_old = $result_old->fetch_assoc()) {
-    $old_video_path = $row_old['video_path'];
-    $video_name_from_db = $row_old['name']; // Keep the existing video name
+    $video_name_from_db = $row_old['name'];
 }
 $stmt_get_old->close();
 
 $uploadDir = __DIR__ . '/uploads_secure/';
-
-// 2. Delete old video file if it exists
-if ($old_video_path && file_exists($uploadDir . $old_video_path)) {
-    if (!unlink($uploadDir . $old_video_path)) {
-        // Log error but don't stop process, as file might be in use or permissions issue
-        error_log("Failed to delete old video file: " . $uploadDir . $old_video_path);
-    }
-}
-
-// 3. Delete associated video_details
-$stmt_delete_details = $conn->prepare("DELETE FROM video_details WHERE video_id = ?");
-$stmt_delete_details->bind_param("i", $video_id);
-if (!$stmt_delete_details->execute()) {
-    // Log error but don't stop process
-    error_log("Failed to delete old video details for video_id: " . $video_id . " Error: " . $stmt_delete_details->error);
-}
-$stmt_delete_details->close();
-
-// --- END: New logic ---
 
 
 // Handle new video file upload
@@ -81,7 +60,7 @@ if (!is_writable($uploadDir)) {
     exit;
 }
 
-$fileName = uniqid() . '_' . basename($_FILES['video']['name']);
+$fileName = 'video_' . $video_id . '_' . uniqid() . '_' . basename($_FILES['video']['name']);
 $fileSize = isset($_FILES['video']['size']) ? (int)$_FILES['video']['size'] : null;
 $uploadFile = $uploadDir . $fileName;
 
@@ -89,17 +68,27 @@ error_log('Attempting to move uploaded file from: ' . $_FILES['video']['tmp_name
 
 if (move_uploaded_file($_FILES['video']['tmp_name'], $uploadFile)) {
     error_log('File moved successfully.');
-    $stmt = $conn->prepare("UPDATE videos SET video_path = ?, file_size = ? WHERE id = ?");
-    $stmt->bind_param("sii", $fileName, $fileSize, $video_id);
+    // First update DB to point to new file
+    $stmt = $conn->prepare("UPDATE videos SET file_size = ?, video_path = ? WHERE id = ?");
+    $stmt->bind_param("isi", $fileSize, $fileName, $video_id);
 
     if ($stmt->execute()) {
         error_log('Database updated successfully for video_id = ' . $video_id);
-        // Return the video name that was already in the database, as it's not changed by this upload
+
+        // After DB update succeeds, delete any old files matching the old pattern to reclaim space
+        $oldFiles = glob($uploadDir . 'video_' . $video_id . '_*');
+        foreach ($oldFiles as $old) {
+            // Keep the newly uploaded file; delete others
+            if (basename($old) !== $fileName && file_exists($old)) {
+                @unlink($old);
+            }
+        }
+
+        // Return success
         $response['success'] = true;
         $response['message'] = 'Video uploaded successfully.';
-        $response['video_path'] = $fileName;
-        $response['video_name'] = $video_name_from_db; // Use the name fetched earlier
-        $response['video_id'] = $video_id; // --- ADD THIS LINE ---
+        $response['video_name'] = $video_name_from_db;
+        $response['video_id'] = $video_id;
 
     } else {
         error_log('Database update failed for video_id = ' . $video_id . ': ' . $stmt->error);

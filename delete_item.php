@@ -28,24 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
         case 'video':
             $table = 'videos';
-            // Before deleting the video record, get the video_path to delete the file
-            $path_stmt = $conn->prepare("SELECT video_path FROM videos WHERE id = ?");
-            $path_stmt->bind_param("i", $id);
-            $path_stmt->execute();
-            $path_result = $path_stmt->get_result();
-            $video_data = $path_result->fetch_assoc();
-            $path_stmt->close();
-
-            if ($video_data && !empty($video_data['video_path'])) {
-                $filePath = __DIR__ . '/' . $video_data['video_path'];
-                if (file_exists($filePath)) {
-                    if (!unlink($filePath)) {
-                        $response['error'] = 'Failed to delete video file.';
-                        echo json_encode($response);
-                        exit;
-                    }
-                }
-            }
+            // File deletion logic removed since we no longer store video_path
             break;
         case 'video_detail': // NEW CASE
             $table = 'video_details';

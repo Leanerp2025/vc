@@ -20,7 +20,7 @@ if (!in_array(strtoupper($sortOrder), $allowedSortOrder)) {
 }
 
 // Construct the SQL query with dynamic sorting
-$sql = "SELECT id, video_path, name, file_size, created_at FROM videos ORDER BY " . $sortBy . " " . $sortOrder;
+$sql = "SELECT id, name, file_size, video_path, created_at FROM videos ORDER BY " . $sortBy . " " . $sortOrder;
 
 $result = $conn->query($sql);
 

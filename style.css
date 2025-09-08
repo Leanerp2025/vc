@@ -358,6 +358,7 @@ body {
 .video-details-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed; /* This is the key change */
     margin-top: 20px;
     font-size: 0.9em;
     min-width: 700px; /* Ensure horizontal scroll on smaller screens */
@@ -593,13 +594,18 @@ body {
     width: 45%; /* Reduced width to better proportion with reduced height */
     margin-left: 0; /* Move to left */
     margin-right: auto; /* Push to left */
+    height: 100%; /* Fill full height of parent container */
+    display: flex;
+    flex-direction: column;
 }
 
 .video-player-wrapper video#videoPlayer {
-    height: 160px !important;
-    max-height: 160px !important;
+    height: 100% !important;
+    max-height: none !important;
     width: 100% !important;
-    object-fit: cover !important;
+    object-fit: contain !important;
+    flex: 1;
+    min-height: 0;
 }
 
 /* ===== POSSIBLE IMPROVEMENTS SECTION - CLEAN VERSION ===== */
@@ -680,34 +686,30 @@ body {
 .improvements-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.97em;
-    margin: 0 !important;
-    padding: 0 !important;
-    flex: 1;
-}
-
-.improvements-table thead {
-    background: #f5f5f5;
+    table-layout: fixed; /* Ensures column widths are respected */
 }
 
 .improvements-table th {
-    padding: 4px 8px !important;
-    text-align: left;
-    border-bottom: 1px solid #ececec;
-    font-weight: 600;
-    color: #495057;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    margin: 0 !important;
+    padding: 8px 12px !important;
+    text-align: left !important;
+    font-weight: 600 !important;
+    color: #495057 !important;
+    background: #f8f9fa !important;
+    border-bottom: 2px solid #dee2e6 !important;
+    
+    /* Sticky header styles */
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
 }
 
 .improvements-table td {
-    padding: 2px 6px !important;
-    text-align: left;
-    border-bottom: 1px solid #ececec;
-    margin: 0 !important;
-    vertical-align: top;
+    padding: 6px 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.improvements-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .improvements-table tbody {
@@ -818,12 +820,6 @@ body {
     max-height: none !important;
 }
 
-.improvements-table tbody {
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-}
-
 /* Minimize gap between video player and improvements */
 .video-player-wrapper {
     margin-right: 0 !important;
@@ -858,6 +854,9 @@ body {
     flex: 1 !important;
     margin-right: 0 !important;
     padding-right: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 /* Ensure both sections get equal width */
@@ -867,34 +866,62 @@ body {
     width: 50% !important;
 }
 
-/* Ensure proper sticky header behavior */
-.improvements-table thead th {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 10 !important;
-    background: #f5f5f5 !important;
-    border-bottom: 2px solid #dee2e6 !important;
-}
+
 
 /* Enable scrolling for table body */
 .improvements-table tbody {
     max-height: 200px !important;
     overflow-y: auto !important;
-    display: block !important;
-    scrollbar-width: thin;
-    scrollbar-color: #c1c1c1 #f1f1f1;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-spacing: 0 !important;
 }
 
 .improvements-table thead tr {
-    display: table !important;
     width: 100% !important;
     table-layout: fixed !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
 }
 
 .improvements-table tbody tr {
-    display: table !important;
     width: 100% !important;
     table-layout: fixed !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-spacing: 0 !important;
+}
+
+/* Remove spacing when table has few rows */
+.improvements-table tbody:not(:empty) {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Remove gap between header and first row */
+.improvements-table thead + tbody {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.improvements-table thead + tbody tr:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Ensure no spacing in table structure */
+.improvements-table {
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+}
+
+.improvements-table thead {
+    border-spacing: 0 !important;
+}
+
+.improvements-table tbody {
+    border-spacing: 0 !important;
 }
 
 /* Smooth scrolling for table body */
@@ -968,6 +995,7 @@ body {
 /* Table layout control */
 .improvements-table {
     table-layout: fixed !important;
+    border-collapse: collapse !important;
 }
 
 /* Add vertical column separators for cleaner representation */
@@ -1007,24 +1035,7 @@ body {
     display: none;
 }
 
-/* Improve table header styling with better borders */
-.improvements-table thead {
-    background: #f5f5f5;
-    border-bottom: 2px solid #dee2e6 !important;
-}
 
-.improvements-table th {
-    padding: 4px 8px !important;
-    text-align: left;
-    border-bottom: 2px solid #dee2e6;
-    font-weight: 600;
-    color: #495057;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    margin: 0 !important;
-    background: #f8f9fa !important;
-}
 
 /* Enhanced table body styling */
 .improvements-table td {
@@ -1056,4 +1067,44 @@ body {
 /* Ensure Plyr video player fills its container height */
 .plyr, .plyr__video-wrapper {
     height: 100% !important;
+    width: 100% !important;
+}
+
+/* Ensure video element fills Plyr container */
+.plyr video {
+    height: 100% !important;
+    width: 100% !important;
+    object-fit: contain !important;
+}
+
+.sticky-header {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    background-color: #ffffff; /* Or match card background */
+    z-index: 10;
+    padding-bottom: 15px;
+    margin-left: -25px;
+    margin-right: -25px;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 20px;
+    margin-top: -25px;
+}
+
+.improvements-table-body td {
+    padding: 6px 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.improvements-table-header {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.improvements-table-header th {
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    background: #f8f9fa;
 }

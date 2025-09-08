@@ -7,7 +7,7 @@ if (!isset($_SESSION['loggedin'])) {
     exit;
 }
 
-$sql = "SELECT id, video_path, name FROM videos WHERE name != 'V2' AND name != 'V3' ORDER BY id ASC";
+$sql = "SELECT id, name FROM videos WHERE name != 'V2' AND name != 'V3' ORDER BY id ASC";
 $result = $conn->query($sql);
 
 $videos = [];

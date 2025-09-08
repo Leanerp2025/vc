@@ -17,7 +17,7 @@ if (!$video_id) {
     exit;
 }
 
-$stmt = $conn->prepare("SELECT id, video_path, name FROM videos WHERE id = ?");
+$stmt = $conn->prepare("SELECT id, name, file_size, video_path FROM videos WHERE id = ?");
 
 if ($stmt === false) {
     $response['error'] = 'Prepare failed: ' . $conn->error;

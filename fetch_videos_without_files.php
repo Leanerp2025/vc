@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 
 $response = ['success' => false, 'error' => '', 'videos' => []];
 
-$sql = "SELECT id, name FROM videos WHERE video_path IS NULL ORDER BY name ASC";
+$sql = "SELECT id, name FROM videos ORDER BY name ASC";
 $result = $conn->query($sql);
 
 if ($result === FALSE) {

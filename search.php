@@ -13,7 +13,7 @@ $search_query = isset($_GET['query']) ? $_GET['query'] : '';
 // Fetch videos based on the search query
 $videos = [];
 if (!empty($search_query)) {
-    $stmt = $conn->prepare("SELECT id, video_path, name FROM videos WHERE name LIKE ? ORDER BY id ASC");
+    $stmt = $conn->prepare("SELECT id, name FROM videos WHERE name LIKE ? ORDER BY id ASC");
     $search_param = "%{$search_query}%";
     $stmt->bind_param("s", $search_param);
     $stmt->execute();
@@ -62,12 +62,8 @@ $conn->close();
                     <?php else: ?>
                         <?php foreach ($videos as $video): ?>
                             <div class="video-card">
-                                <a href="content.php?video_id=<?php echo htmlspecialchars($video['id']); ?>&video_path=<?php echo htmlspecialchars($video['video_path'] ?? ''); ?>&video_name=<?php echo htmlspecialchars($video['name']); ?>">
-                                    <?php if (!empty($video['video_path'])): ?>
-                                        <video class="video-thumb" src="serve_video.php?video_id=<?php echo htmlspecialchars($video['id']); ?>" preload="metadata"></video>
-                                    <?php else: ?>
-                                        <img class="video-thumb" src="placeholder.png" alt="No video thumbnail available">
-                                    <?php endif; ?>
+                                <a href="content.php?video_id=<?php echo htmlspecialchars($video['id']); ?>&video_name=<?php echo htmlspecialchars($video['name']); ?>">
+                                    <div class="video-thumb-placeholder">📹</div>
                                     <div class="video-meta"><?php echo htmlspecialchars(str_replace('_', ' ', $video['name'])); ?></div>
                                 </a>
                             </div>

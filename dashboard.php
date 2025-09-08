@@ -118,7 +118,7 @@ $conn = require 'db.php';
     <?php
     // Fetch all videos
     $videos = [];
-    $stmt = $conn->prepare("SELECT id, video_path, name FROM videos ORDER BY id ASC");
+                    $stmt = $conn->prepare("SELECT id, name, file_size FROM videos ORDER BY id ASC");
     $stmt->execute();
     $result = $stmt->get_result();
     while ($row = $result->fetch_assoc()) {
@@ -129,18 +129,23 @@ $conn = require 'db.php';
     <?php if (empty($videos)): ?>
         <p>No video captures added yet.</p>
     <?php else: ?>
-        <?php foreach ($videos as $video): ?>
-            <div class="item-card">
-                <div class="item-card-header">
-                    <span class="file-name"><?php echo htmlspecialchars($video['name']); ?></span>
-                    <div class="item-card-actions">
-                        <a href="content.php?video_id=<?php echo htmlspecialchars($video['id']); ?>&video_name=<?php echo htmlspecialchars($video['name']); ?>" class="arrow-icon" title="Open">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
+                                <?php foreach ($videos as $video): ?>
+                            <div class="item-card">
+                                <div class="item-card-header">
+                                                                         <span class="file-name">
+                                         <?php echo htmlspecialchars($video['name']); ?>
+                                         <?php if ($video['file_size'] && $video['file_size'] > 0): ?>
+                                             <span class="material-symbols-outlined" style="color: #28a745; font-size: 16px;" title="Video file uploaded">check_circle</span>
+                                         <?php endif; ?>
+                                     </span>
+                                    <div class="item-card-actions">
+                                        <a href="content.php?video_id=<?php echo htmlspecialchars($video['id']); ?>&video_name=<?php echo htmlspecialchars($video['name']); ?>" class="arrow-icon" title="Open">
+                                            <span class="material-symbols-outlined">arrow_forward</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
     <?php endif; ?>
 </div>
                 </div>
@@ -191,12 +196,12 @@ $conn = require 'db.php';
 
             <div id="videoForm" style="display:none;">
                 <h3>Add Video Capture</h3>
-                <form id="addVideoForm" enctype="multipart/form-data">
+                <form id="addVideoForm">
                     <div class="form-group">
                         <label for="videoName">Video Name:</label>
                         <input type="text" id="videoName" name="videoName" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn-primary">Add Video</button>
+                    <button type="submit" class="btn-primary">Add Video Name</button>
                 </form>
             </div>
         </div>

@@ -5,35 +5,47 @@ $dbname = 'videocapture';
 $username = 'root';
 $password = '';
 
+// Initialize connection as null
+$conn = null;
+
 try {
+    // Check if mysqli extension is available
+    if (!class_exists('mysqli')) {
+        throw new Exception('mysqli extension not available');
+    }
+    
     $conn = new mysqli($host, $username, $password, $dbname);
     
     if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+        throw new Exception("Connection failed: " . $conn->connect_error);
     }
     
     // Set charset to utf8mb4
     $conn->set_charset("utf8mb4");
     
 } catch (Exception $e) {
-    die("Connection failed: " . $e->getMessage());
+    // Log the error but don't output anything
+    error_log("db.php: Database connection failed: " . $e->getMessage());
+    $conn = null;
 }
 
-// sql to create users table if not exists
-$sql = "CREATE TABLE IF NOT EXISTS users (
-    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)";
+// Only create tables if database connection is available
+if ($conn) {
+    // sql to create users table if not exists
+    $sql = "CREATE TABLE IF NOT EXISTS users (
+        id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )";
 
-if ($conn->query($sql) === TRUE) {
-    // Table users created successfully or already exists
-} else {
-    echo "Error creating users table: " . $conn->error;
-}
+    if ($conn->query($sql) === TRUE) {
+        // Table users created successfully or already exists
+    } else {
+        echo "Error creating users table: " . $conn->error;
+    }
 
-// sql to create organizations table if not exists
+    // sql to create organizations table if not exists
 $sql = "CREATE TABLE IF NOT EXISTS organizations (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
@@ -63,8 +75,8 @@ if ($conn->query($sql) === TRUE) {
 $sql = "CREATE TABLE IF NOT EXISTS videos (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    video_path VARCHAR(500) NOT NULL,
     file_size BIGINT UNSIGNED,
+    video_path VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
@@ -74,14 +86,26 @@ if ($conn->query($sql) === TRUE) {
     echo "Error creating videos table: " . $conn->error;
 }
 
+// Check if the column 'video_path' exists in 'videos' table and add it if it doesn't
+$result = $conn->query("SHOW COLUMNS FROM videos LIKE 'video_path'");
+if ($result && $result->num_rows == 0) {
+    $sql = "ALTER TABLE videos ADD COLUMN video_path VARCHAR(500) AFTER file_size";
+    if ($conn->query($sql) === TRUE) {
+        // Column added successfully
+    } else {
+        echo "Error adding video_path column: " . $conn->error;
+    }
+}
+
 // sql to create video_details table if not exists
 $sql = "CREATE TABLE IF NOT EXISTS video_details (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_fe INT(6) UNSIGNED,
     video_id INT(6) UNSIGNED NOT NULL,
     operator VARCHAR(30) NOT NULL,
     description TEXT NOT NULL,
     va_nva_enva VARCHAR(30) NOT NULL,
-    possible_improvements TEXT,
+    activity_type VARCHAR(30) NOT NULL DEFAULT 'manual',
     start_time VARCHAR(30) NOT NULL,
     end_time VARCHAR(30) NOT NULL,
     FOREIGN KEY (video_id) REFERENCES videos(id) ON DELETE CASCADE
@@ -118,10 +142,22 @@ if ($result && $result->num_rows > 0) {
     $conn->query("ALTER TABLE video_details CHANGE operator_name operator VARCHAR(30) NOT NULL");
 }
 
-// Check if the column 'activity_type' exists in 'video_details' table and drop it
-$result = $conn->query("SHOW COLUMNS FROM video_details LIKE 'activity_type'");
+// Check if the column 'id_fe' exists in 'video_details' table and add it if it doesn't
+$result = $conn->query("SHOW COLUMNS FROM video_details LIKE 'id_fe'");
+if ($result && $result->num_rows == 0) {
+    $conn->query("ALTER TABLE video_details ADD COLUMN id_fe INT(6) UNSIGNED AFTER id");
+}
+
+// Migrate from possible_improvements column to activity_type column
+$result = $conn->query("SHOW COLUMNS FROM video_details LIKE 'possible_improvements'");
 if ($result && $result->num_rows > 0) {
-    $conn->query("ALTER TABLE video_details DROP COLUMN activity_type");
+    // Add activity_type column if it doesn't exist
+    $activityTypeExists = $conn->query("SHOW COLUMNS FROM video_details LIKE 'activity_type'");
+    if ($activityTypeExists && $activityTypeExists->num_rows == 0) {
+        $conn->query("ALTER TABLE video_details ADD COLUMN activity_type VARCHAR(30) NOT NULL DEFAULT 'manual' AFTER va_nva_enva");
+    }
+    // Drop the old possible_improvements column
+    $conn->query("ALTER TABLE video_details DROP COLUMN possible_improvements");
 }
 
 // Check if video_detail_id column exists in possible_improvements table
@@ -169,5 +205,7 @@ if ($fkPIResult && $row = $fkPIResult->fetch_assoc()) {
         }
     }
 }
+
+} // End of database operations
 
 return $conn;
