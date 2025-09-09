@@ -61,9 +61,12 @@ function handle_add_video($conn) {
         }
         $videoName = trim($_POST['videoName']);
 
-        // Only create video name entry - no file upload at this stage
-        // File will be uploaded later in content.php
-        
+        // Validate video name length (only maximum length check)
+        if (strlen($videoName) > 255) {
+            echo json_encode(['success' => false, 'error' => 'Video name must be less than 255 characters.']);
+            exit;
+        }
+
         // Check if video with this name already exists
         $checkStmt = $conn->prepare("SELECT id FROM videos WHERE name = ?");
         $checkStmt->bind_param("s", $videoName);
@@ -77,18 +80,22 @@ function handle_add_video($conn) {
         }
         $checkStmt->close();
 
-        // Insert video name into database (file_size and video_path will be NULL initially)
-        $stmt = $conn->prepare("INSERT INTO videos (name, video_path) VALUES (?, '')");
+        // Insert video name into database with proper defaults
+        $stmt = $conn->prepare("INSERT INTO videos (name, video_path, file_size, created_at) VALUES (?, NULL, NULL, NOW())");
         $stmt->bind_param("s", $videoName);
 
         if ($stmt->execute()) {
             $newVideoId = $conn->insert_id;
-            error_log("upload.php: New video name entry created with ID = " . $newVideoId . ", name = " . $videoName);
+            error_log("upload.php: New video capture created with ID = " . $newVideoId . ", name = " . $videoName);
+            
+            // Return success with all necessary data for dashboard
             echo json_encode([
                 'success' => true,
-                'message' => 'Video name created successfully. You can now upload the video file.',
+                'message' => 'Video capture created successfully! You can now upload the video file.',
                 'video_id' => $newVideoId,
-                'video_name' => $videoName
+                'video_name' => $videoName,
+                'file_size' => null,
+                'created_at' => date('Y-m-d H:i:s')
             ]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Database error: ' . $stmt->error]);

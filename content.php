@@ -96,7 +96,7 @@ if ($videoId) {
                                                         <span id="videoCaptureNameDisplayOneDrive" class="form-control-static" style="display: block; padding: 4px; background-color: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; word-wrap: break-word; overflow-wrap: break-word; box-sizing: border-box;"></span>
                                                     </div>
                                                     <div class="form-group" style="margin-bottom: 10px; box-sizing: border-box;">
-                                                        <label for="oneDriveUrl" style="display: block; margin-bottom: 3px; font-weight: 500; font-size: 0.9em;">OneDrive Share Link or Embed Code</label>
+                                                        <label for="oneDriveUrl" style="display: block; margin-bottom: 3px; font-weight: 500; font-size: 0.9em;">Paste Embed Code</label>
                                                         <textarea id="oneDriveUrl" name="oneDriveUrl" class="form-control" rows="2" placeholder="Paste OneDrive share link or embed code here" required style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; box-sizing: border-box; font-size: 0.9em; word-wrap: break-word; overflow-wrap: break-word;"></textarea>
                                                     </div>
                                                     <button type="button" class="btn-primary" id="oneDriveImportBtn" style="width: 100%; padding: 8px; box-sizing: border-box; font-size: 0.9em;">Import Video</button>
@@ -172,22 +172,6 @@ if ($videoId) {
                     </section>
                 </div>
             </section>
-            <div class="video-list-card card">
-                <h2>My Videos</h2>
-                <div class="sort-controls" style="margin-bottom: 15px;">
-                    <label for="sortSelect">Sort by:</label>
-                    <select id="sortSelect" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
-                        <option value="name">Name</option>
-                        <option value="file_size">Size</option>
-                        <option value="created_at">Date Created</option>
-                    </select>
-                    <button id="sortAscBtn" class="btn-primary btn-small">Ascending</button>
-                    <button id="sortDescBtn" class="btn-primary btn-small" style="margin-left: 5px;">Descending</button>
-                </div>
-                <div class="video-grid-container">
-                    <div id="videoGrid" class="video-grid"></div>
-                </div>
-            </div>
         </div>
     </main>
 
@@ -228,7 +212,7 @@ if ($videoId) {
                         <span id="videoCaptureNameDisplayOneDrive" class="form-control-static"></span>
                     </div>
                     <div class="form-group">
-                        <label for="oneDriveUrl">OneDrive Share Link or Embed Code</label>
+                        <label for="oneDriveUrl">Paste Embed Code</label>
                         <textarea id="oneDriveUrl" name="oneDriveUrl" class="form-control" rows="4" placeholder="Paste OneDrive share link or embed code here" required></textarea>
                         <small class="form-text text-muted">You can paste either a OneDrive share link or the embed code from SharePoint</small>
                     </div>

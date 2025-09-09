@@ -13,7 +13,7 @@ if (!$video_id) {
     exit;
 }
 
-$stmt = $conn->prepare("SELECT video_detail_id FROM possible_improvements WHERE video_id = ? ORDER BY id ASC");
+$stmt = $conn->prepare("SELECT id, video_detail_id, cycle_number, improvement, type_of_benefits FROM possible_improvements WHERE video_id = ? ORDER BY id ASC");
 
 if ($stmt === false) {
     $response['error'] = 'Prepare failed: ' . $conn->error;

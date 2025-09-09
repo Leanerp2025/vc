@@ -204,8 +204,7 @@ if ($fkPIResult && $row = $fkPIResult->fetch_assoc()) {
             $conn->query("ALTER TABLE `possible_improvements` ADD CONSTRAINT `fk_possible_improvements_video_detail_id` FOREIGN KEY (`video_detail_id`) REFERENCES `video_details`(`id`) ON DELETE CASCADE");
         }
     }
-}
-
-} // End of database operations
+} // End of if ($conn) block
 
 return $conn;
+}

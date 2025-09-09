@@ -116,9 +116,9 @@ $conn = require 'db.php';
                     <h2>Video Captures <a href="all_video_captures.php" class="arrow-icon"><span class="material-symbols-outlined">arrow_forward</span></a></h2>
                     <div id="videoCapturesList" class="item-list">
     <?php
-    // Fetch all videos
+    // Fetch all videos with creation date
     $videos = [];
-                    $stmt = $conn->prepare("SELECT id, name, file_size FROM videos ORDER BY id ASC");
+    $stmt = $conn->prepare("SELECT id, name, file_size, created_at FROM videos ORDER BY created_at DESC");
     $stmt->execute();
     $result = $stmt->get_result();
     while ($row = $result->fetch_assoc()) {
@@ -132,16 +132,22 @@ $conn = require 'db.php';
                                 <?php foreach ($videos as $video): ?>
                             <div class="item-card">
                                 <div class="item-card-header">
-                                                                         <span class="file-name">
-                                         <?php echo htmlspecialchars($video['name']); ?>
-                                         <?php if ($video['file_size'] && $video['file_size'] > 0): ?>
-                                             <span class="material-symbols-outlined" style="color: #28a745; font-size: 16px;" title="Video file uploaded">check_circle</span>
-                                         <?php endif; ?>
-                                     </span>
+                                    <span class="file-name">
+                                        <?php echo htmlspecialchars($video['name']); ?>
+                                        <?php if ($video['file_size'] && $video['file_size'] > 0): ?>
+                                            <span class="material-symbols-outlined" style="color: #28a745; font-size: 16px;" title="Video file uploaded">check_circle</span>
+                                            <br><small style="color: #666; font-size: 0.8em;">
+                                                <?php echo number_format($video['file_size']/1024/1024, 2); ?> MB
+                                            </small>
+                                        <?php endif; ?>
+                                    </span>
                                     <div class="item-card-actions">
                                         <a href="content.php?video_id=<?php echo htmlspecialchars($video['id']); ?>&video_name=<?php echo htmlspecialchars($video['name']); ?>" class="arrow-icon" title="Open">
                                             <span class="material-symbols-outlined">arrow_forward</span>
                                         </a>
+                                        <button class="delete-btn" data-id="<?php echo htmlspecialchars($video['id']); ?>" data-type="video" title="Delete">
+                                            <span class="material-symbols-outlined">close</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

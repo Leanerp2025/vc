@@ -80,16 +80,42 @@ try {
         error_log("No video_path to delete for video ID: $videoId");
     }
     
-    // Only delete the video record, keep video details and possible improvements
+    // Delete the video record - related data will be preserved with video_id set to NULL
+    // The foreign key constraints are now SET NULL, so related records will be preserved
+    
+    // Count related records before deletion for reporting
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM video_details WHERE video_id = ?");
+    $stmt->bind_param("i", $videoId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $detailsCount = $result->fetch_assoc()['count'];
+    
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM possible_improvements WHERE video_id = ?");
+    $stmt->bind_param("i", $videoId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $improvementsCount = $result->fetch_assoc()['count'];
+    
+    error_log("Found $detailsCount video details and $improvementsCount possible improvements for video ID: $videoId");
+    
+    // Delete the video record - foreign keys will automatically set related video_id to NULL
     $stmt = $conn->prepare("DELETE FROM videos WHERE id = ?");
     $stmt->bind_param("i", $videoId);
     $stmt->execute();
     $videoDeleted = $stmt->affected_rows;
-    error_log("Deleted $videoDeleted video record (keeping video details and improvements)");
+    error_log("Deleted $videoDeleted video record for video ID: $videoId");
     
     if ($videoDeleted > 0) {
-        error_log("Video deletion successful");
-        echo json_encode(['success' => true, 'message' => 'Video deleted successfully']);
+        error_log("Video deletion successful - related data preserved with video_id set to NULL");
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Video deleted successfully. Related data has been preserved.',
+            'details' => [
+                'video_deleted' => $videoDeleted,
+                'video_details_preserved' => $detailsCount,
+                'possible_improvements_preserved' => $improvementsCount
+            ]
+        ]);
     } else {
         error_log("No video record was deleted");
         echo json_encode(['success' => false, 'message' => 'Video not found or already deleted']);

@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     
-    // Function to delete video
+    // Function to delete video file only (preserve data)
     function deleteVideo(videoId) {
-        console.log('Attempting to delete video with ID:', videoId);
+        console.log('Attempting to delete video file with ID:', videoId);
         console.log('Type of videoId:', typeof videoId);
         console.log('Current videoId from global:', currentVideoId);
         console.log('Initial videoId from server:', initialVideoIdFromServer);
@@ -76,13 +76,13 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Using currentVideoId as fallback:', videoId);
         }
         
-        if (confirm('Are you sure you want to delete this video? This action cannot be undone.')) {
-            console.log('User confirmed deletion, sending request for video ID:', videoId);
+        if (confirm('Are you sure you want to delete this video file? The video details and improvements will be preserved.')) {
+            console.log('User confirmed file deletion, sending request for video ID:', videoId);
             console.log('Current page URL:', window.location.href);
             
-            // Always try to delete from database if we have a video ID
+            // Delete only the video file, preserve all data
             if (videoId) {
-                fetch('delete_video.php', {
+                fetch('delete_video_file.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -96,30 +96,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success) {
-                        console.log('Video deleted successfully from database');
+                        console.log('Video file deleted successfully, data preserved');
+                        alert('Video file deleted successfully! Video details and improvements have been preserved.');
+                        
+                        // Do hard refresh immediately after video file deletion for better data fetch
+                        console.log('Performing hard refresh after video file deletion for better data fetch');
+                        window.location.reload(true);
                     } else {
-                        console.log('Database deletion failed, but continuing with cleanup:', data.message);
+                        console.log('File deletion failed:', data.message);
+                        alert('Error deleting video file: ' + data.message);
                     }
-                    
-                    // Always perform cleanup regardless of database result
-                    console.log('About to perform video cleanup...');
-                    performVideoCleanup();
                 })
                 .catch(error => {
-                    console.error('Database deletion error:', error);
-                    console.log('Continuing with cleanup despite database error');
-                    
-                    // Always perform cleanup even if database deletion fails
-                    console.log('About to perform video cleanup...');
-                    performVideoCleanup();
+                    console.error('File deletion error:', error);
+                    alert('Error deleting video file: ' + error.message);
                 });
             } else {
-                console.log('No video ID available, performing cleanup only');
-                console.log('About to perform video cleanup...');
-                performVideoCleanup();
+                console.log('No video ID available for file deletion');
+                alert('No video ID available for deletion');
             }
         }
     }
+    
     
     // Function to perform video cleanup and return to upload interface
     function performVideoCleanup() {
@@ -200,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <span id="videoCaptureNameDisplayOneDrive" class="form-control-static" style="display: block; padding: 4px; background-color: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; word-wrap: break-word; overflow-wrap: break-word; box-sizing: border-box;">Video deleted - ready for new upload</span>
                         </div>
                         <div class="form-group" style="margin-bottom: 10px; box-sizing: border-box;">
-                            <label for="oneDriveUrl" style="display: block; margin-bottom: 3px; font-weight: 500; font-size: 0.9em;">OneDrive Share Link or Embed Code</label>
+                            <label for="oneDriveUrl" style="display: block; margin-bottom: 3px; font-weight: 500; font-size: 0.9em;">Paste Embed Code</label>
                             <textarea id="oneDriveUrl" name="oneDriveUrl" class="form-control" rows="2" placeholder="Paste OneDrive share link or embed code here" required style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; box-sizing: border-box; font-size: 0.9em; word-wrap: break-word; overflow-wrap: break-word;"></textarea>
                         </div>
                         <button type="button" class="btn-primary" id="oneDriveImportBtn" style="width: 100%; padding: 8px; box-sizing: border-box; font-size: 0.9em;">Import Video</button>
@@ -268,7 +266,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (oneDriveImportBtn) {
             oneDriveImportBtn.addEventListener('click', function() {
                 const oneDriveUrl = document.getElementById('oneDriveUrl').value;
-                if (!currentVideoId) {
+                
+                // Get video ID from URL parameters or currentVideoId
+                let videoId = currentVideoId || initialVideoId;
+                
+                if (!videoId) {
                     alert('Please select a video capture first.');
                     return;
                 }
@@ -297,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        video_id: currentVideoId,
+                        video_id: videoId,
                         onedrive_url: processedData,
                         embed_code: embedCode
                     })
@@ -467,7 +469,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (oneDriveImportBtn) {
         oneDriveImportBtn.addEventListener('click', function() {
             const oneDriveUrl = document.getElementById('oneDriveUrl').value;
-            if (!currentVideoId) {
+            
+            // Get video ID from URL parameters or currentVideoId
+            let videoId = currentVideoId || initialVideoId;
+            
+            if (!videoId) {
                 alert('Please select a video capture first.');
                 return;
             }
@@ -496,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    video_id: currentVideoId,
+                    video_id: videoId,
                     onedrive_url: processedData,
                     embed_code: embedCode
                 })
@@ -583,39 +589,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const videoCaptureNameDisplay = document.getElementById('videoCaptureNameDisplay');
     const detailsTableBody = document.getElementById('detailsTableBody');
 
-    // Function to load and display videos in the video grid
-    function loadVideosForContentPage(sortBy = 'name', sortOrder = 'ASC') {
-        console.log('loadVideosForContentPage called.');
-        fetch(`fetch_all_videos.php?sortBy=${encodeURIComponent(sortBy)}&sortOrder=${encodeURIComponent(sortOrder)}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Videos data received for content page:', data);
-                const videoGrid = document.getElementById('videoGrid');
-                console.log('videoGrid element:', videoGrid);
-                if (videoGrid) {
-                    videoGrid.innerHTML = '';
-                    if (data.length === 0) {
-                        videoGrid.innerHTML = '<p>No videos found.</p>';
-                        return;
-                    }
-                    data.forEach(video => {
-                        console.log('Processing video:', video);
-                        const videoCard = document.createElement('div');
-                        videoCard.className = 'video-card';
-                        const sizeText = (typeof video.file_size === 'number' && !isNaN(video.file_size)) ? ` • ${(video.file_size/1024/1024).toFixed(2)} MB` : '';
-                        const isCurrent = String(video.id) === String(currentVideoId || initialVideoId || '');
-                        const currentMark = isCurrent ? '<span class="material-symbols-outlined current-check" title="Current">check_circle</span>' : '';
-                        videoCard.innerHTML = `
-                            <div class="video-meta">${video.name}${sizeText} ${currentMark}</div>
-                        `;
-                        videoGrid.appendChild(videoCard);
-                    });
-                }
-            })
-            .catch(error => console.error('Error loading videos for content page:', error));
-    }
 
-    loadVideosForContentPage();
 
     function adjustPlayerHeight() {
         const improvementsCard = document.querySelector('.new-table-card');
@@ -797,12 +771,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                             newRow.dataset.id = imp.id || null; // Keep database ID for operations
                                             
                                             // Create dropdown for ID selection using id_fe values from video details
+                                            // Use the actual video_detail_id for selection
                                             const idDropdown = createIdDropdown(lastDetailsData?.details || [], imp.video_detail_id || '');
                                             newRow.innerHTML = `
                             <td>${idDropdown}</td>
-                            <td><input type="text" class="form-control" name="cycle_number" placeholder="Cycle#"></td>
-                            <td><input type="text" class="form-control" name="improvement" placeholder="Improvement"></td>
-                            <td><input type="text" class="form-control" name="type_of_benefits" placeholder="Benefits"></td>
+                            <td><input type="text" class="form-control" name="cycle_number" placeholder="Cycle#" value="${imp.cycle_number || ''}"></td>
+                            <td><input type="text" class="form-control" name="improvement" placeholder="Improvement" value="${imp.improvement || ''}"></td>
+                            <td><input type="text" class="form-control" name="type_of_benefits" placeholder="Benefits" value="${imp.type_of_benefits || ''}"></td>
                                                 <td><button class="btn-danger delete-row-btn" data-id="${imp.id || 'null'}">Delete</button></td>
                                             `;
                         });
@@ -1205,36 +1180,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    const sortSelect = document.getElementById('sortSelect');
-    const sortAscBtn = document.getElementById('sortAscBtn');
-    const sortDescBtn = document.getElementById('sortDescBtn');
-
-    let currentSortBy = sortSelect ? sortSelect.value : 'name';
-    let currentSortOrder = 'ASC'; // Default sort order
-
-    if (sortSelect) {
-        sortSelect.addEventListener('change', function() {
-            currentSortBy = this.value;
-            loadVideosForContentPage(currentSortBy, currentSortOrder);
-        });
-    }
-
-    if (sortAscBtn) {
-        sortAscBtn.addEventListener('click', function() {
-            currentSortOrder = 'ASC';
-            loadVideosForContentPage(currentSortBy, currentSortOrder);
-        });
-    }
-
-    if (sortDescBtn) {
-        sortDescBtn.addEventListener('click', function() {
-            currentSortOrder = 'DESC';
-            loadVideosForContentPage(currentSortBy, currentSortOrder);
-        });
-    }
-
-    // Initial load with default sorting
-    loadVideosForContentPage(currentSortBy, currentSortOrder);
 
     // Possible Improvements Section Functionality
     const improvementsAddRow = document.getElementById('improvementsAddRow');
@@ -1388,8 +1333,9 @@ document.addEventListener('DOMContentLoaded', function () {
         
         videoDetails.forEach(detail => {
             const id_fe = detail.id_fe || detail.id; // Use id_fe if available, fallback to id
-            const isSelected = selectedValue == id_fe ? 'selected' : '';
-            dropdown += `<option value="${id_fe}" ${isSelected}>${id_fe}</option>`;
+            const actualId = detail.id; // Use actual database ID for the value
+            const isSelected = selectedValue == actualId ? 'selected' : '';
+            dropdown += `<option value="${actualId}" ${isSelected}>${id_fe}</option>`;
         });
         
         dropdown += '</select>';

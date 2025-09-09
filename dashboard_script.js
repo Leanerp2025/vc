@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         const formData = new FormData();
         formData.append('action', 'add_video');
-        // Create name-only entry; no file included
+        
         const videoNameInput = document.getElementById('videoName');
         if (!videoNameInput || !videoNameInput.value.trim()) {
             alert('Please enter a video name.');
@@ -134,21 +134,38 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.textContent = 'Add Video Name';
             return;
         }
-        formData.append('videoName', videoNameInput.value.trim());
+        
+        const videoName = videoNameInput.value.trim();
+        formData.append('videoName', videoName);
+
+        console.log('Creating video capture:', videoName);
 
         fetch('upload.php', {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('Video creation response:', data);
             if (data.success) {
+                // Show success message
                 alert(data.message);
+                
+                // Close modal
                 closeModal(addItemModal);
-                // Refresh video list before redirecting
+                
+                // Refresh video list to show the new video capture
+                console.log('Refreshing video captures list...');
                 loadVideoCaptures();
-                // Redirect to content.php to upload the video file
-                window.location.href = `content.php?video_id=${data.video_id}&video_name=${encodeURIComponent(data.video_name)}`;
+                
+                // Small delay to ensure the list is refreshed before redirect
+                setTimeout(() => {
+                    console.log('Redirecting to content.php with video_id:', data.video_id);
+                    window.location.href = `content.php?video_id=${data.video_id}&video_name=${encodeURIComponent(data.video_name)}`;
+                }, 500);
             } else {
                 alert('Error adding video: ' + data.error);
                 submitBtn.disabled = false;
@@ -261,12 +278,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const hasFile = video.file_size && video.file_size > 0;
                     const fileStatus = hasFile ? 
-                        '<span class="material-symbols-outlined" style="color: #28a745; font-size: 16px;" title="Video file uploaded">check_circle</span>' : 
-                        '';
+                        '<span class="material-symbols-outlined" style="color: #28a745; font-size: 16px;" title="Video file uploaded">check_circle</span>' : '';
+                    
+                    // Show file size if available
+                    const fileSizeText = hasFile && video.file_size ? `<br><small style="color: #666; font-size: 0.8em;">${(video.file_size/1024/1024).toFixed(2)} MB</small>` : '';
                     
                     div.innerHTML = `
                         <div class="item-card-header">
-                            <span class="file-name">${videoDisplayName} ${fileStatus}</span>
+                            <span class="file-name">
+                                ${videoDisplayName} ${fileStatus}${fileSizeText}
+                            </span>
                             <div class="item-card-actions">
                                 <a href="content.php?video_id=${video.id}&video_name=${encodeURIComponent(video.name)}" class="arrow-icon" title="Open"><span class="material-symbols-outlined">arrow_forward</span></a>
                                 <button class="delete-btn" data-id="${video.id}" data-type="video" title="Delete">
