@@ -880,6 +880,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 </td>
                 <td><button class="btn-danger delete-row-btn">Delete</button></td>
             `;
+            
+            // The sticky header is now handled by the sticky-header class
         });
     }
 

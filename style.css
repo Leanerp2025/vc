@@ -348,11 +348,38 @@ body {
     background-color: #f1f3f5;
 }
 
+/* Video Details Section */
+.video-details-section {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: #ffffff;
+    padding: 20px 0;
+    margin-top: 20px;
+}
+
+.video-details-heading {
+    color: #333;
+    font-size: 1.4em;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    background-color: #ffffff;
+    padding: 15px 20px;
+    margin: 0 0 15px 0;
+    border-bottom: 2px solid #e9ecef;
+}
+
 /* Video Details Table */
 .video-details-table-container {
     max-height: 400px; /* Adjust this value as needed */
     overflow-y: auto;
     position: relative;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin: 0 20px;
+    background-color: #fff;
 }
 
 .video-details-table {
@@ -365,11 +392,11 @@ body {
 }
 
 .video-details-table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #333;
 }
-
 
 .video-details-table th,
 .video-details-table td {
@@ -379,10 +406,13 @@ body {
 }
 
 .video-details-table th {
-    background-color: #f8f9fa;
-    color: #495057;
     font-weight: 600;
     text-transform: uppercase;
+    border-right: 1px solid #dee2e6;
+}
+
+.video-details-table th:last-child {
+    border-right: none;
 }
 
 .video-details-table tbody tr:nth-child(even) {
@@ -845,8 +875,18 @@ body {
     margin: 0 !important;
 }
 
+/* Dashboard content layout */
+.dashboard-content {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    align-items: flex-start;
+}
+
 .video-player-card {
     margin-right: 0 !important;
+    z-index: 10;
+    position: relative;
 }
 
 /* Video player wrapper equal width */
@@ -1090,6 +1130,87 @@ body {
     padding-right: 25px;
     padding-top: 20px;
     margin-top: -25px;
+}
+
+/* Sticky Video Player Section */
+.sticky-video-player {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 0;
+}
+
+/* Sticky Video Details Table Header - Positioned below video player */
+.sticky-video-details-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 320px; /* Position below the video player section */
+    z-index: 90;
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 0;
+    padding: 20px 0 10px 0;
+    width: 100%;
+}
+
+.video-details-table-header-sticky {
+    padding: 0 25px;
+    position: sticky;
+    top: 320px; /* Match the parent container */
+    z-index: 90;
+    background-color: #ffffff;
+}
+
+.video-details-table-header-only {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 0.9em;
+    min-width: 700px;
+}
+
+.video-details-table-header-only th {
+    background-color: #f8f9fa !important;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #333 !important;
+    padding: 12px 15px;
+    border: 1px solid #e9ecef;
+    text-align: left;
+    position: sticky;
+    top: 320px; /* Position below video player section */
+    z-index: 90;
+}
+
+/* Video details section positioning */
+#videoDetailsSection {
+    position: relative;
+    z-index: 1;
+    background-color: #ffffff;
+    width: 100%;
+    margin-top: 0;
+    overflow: visible;
+}
+
+/* Ensure sticky works in main container */
+.main-content-wrapper {
+    overflow: visible;
+}
+
+.content-main-container {
+    overflow: visible;
+}
+
+/* Override sticky behavior for video capture file name */
+.sticky-header h2 {
+    position: static !important;
+}
+
+.sticky-header .form-group#videoCaptureSelection {
+    position: static !important;
 }
 
 .improvements-table-body td {

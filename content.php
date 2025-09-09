@@ -55,11 +55,15 @@ if ($videoId) {
     <?php include 'header.php'; ?>
     <main class="container content-main-container">
         <div class="main-content-wrapper" style="display: flex; flex-direction: column; gap: 25px;">
-            <section class="dashboard-content" style="display: flex; flex-direction: row; gap: 15px; align-items: flex-start;">
-                <div class="video-player-card card" style="padding-bottom: 0; padding-left: 25px; padding-right: 25px; flex: 1.5;">
-                    <div class="sticky-header">
-                        <h2>Upload Video</h2>
-                        <div style="display: flex; flex-direction: row; gap: 8px; align-items: stretch; height: 280px;">
+            <!-- Upload Video Heading - Not Floating -->
+            <h2 style="margin: 0 0 15px 0; padding: 0 25px;">Upload Video</h2>
+            
+            <!-- Sticky Video Player Section -->
+            <div class="sticky-video-player">
+                <section class="dashboard-content" style="display: flex; flex-direction: row; gap: 0; align-items: flex-start;">
+                    <div class="video-player-card card" style="padding-bottom: 0; padding-left: 25px; padding-right: 25px; flex: 1.5;">
+                        <div class="sticky-header">
+                            <div style="display: flex; flex-direction: row; gap: 8px; align-items: stretch; height: 280px;">
                                         <div class="upload-interface-wrapper" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 2px dashed #007bff; border-radius: 8px; padding: 15px; background-color: #f8f9fa; box-sizing: border-box; overflow: hidden;">
                                             
                                             <!-- Upload Tabs -->
@@ -108,7 +112,7 @@ if ($videoId) {
                         <!-- Possible Improvements Section -->
                         <div class="card possible-improvements-card" style="flex: 1; min-width: 350px; max-width: none; display: flex; flex-direction: column;">
                             <div class="improvements-header">
-                                <h2>Possible Improvements</h2>
+                                <h2 style="color: #333; font-size: 1.1em; margin: 0; padding: 0; display: block; visibility: visible;">Possible Improvements</h2>
                                 <div class="improvements-actions">
                                     <button id="improvementsAddRow" class="icon-btn" title="Add Row">
                                         <span class="material-symbols-outlined">add</span>
@@ -139,38 +143,48 @@ if ($videoId) {
                         </div>
                     </div>
                 </div>
+            </section>
+            </div>
 
-                <section id="videoDetailsSection" class="video-details-section">
-                    <div class="video-details-table-container">
-                    <table class="video-details-table">
+            <!-- Sticky Video Details Table Header -->
+            <div class="sticky-video-details-header">
+                <h2 style="margin: 0 0 15px 0; padding: 0 25px;">Video Details</h2>
+                <div class="video-details-table-header-sticky">
+                    <table class="video-details-table-header-only">
                         <thead>
-                                <tr>
-                                    <th style="width: 2%;">ID</th>
-                                    <th style="width: 5%;">Operator</th>
-                                    <th style="width: 30%;">Description</th>
-                                    <th style="width: 6%;">Type</th>
-                                    <th style="width: 6%;">Activity Type</th>
-                                    <th style="width: 13%;" class="time-col">Start Time</th>
-                                    <th style="width: 13%;" class="time-col">End Time</th>
+                            <tr>
+                                <th style="width: 2%;">ID</th>
+                                <th style="width: 5%;">Operator</th>
+                                <th style="width: 30%;">Description</th>
+                                <th style="width: 6%;">Type</th>
+                                <th style="width: 6%;">Activity Type</th>
+                                <th style="width: 13%;" class="time-col">Start Time</th>
+                                <th style="width: 13%;" class="time-col">End Time</th>
                                 <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="detailsTableBody">
-                                <!-- Rows will be added here dynamically -->
-                                
-                            </tbody>
-                        </table>
-                        </div>
-                        <div class="save-details-button-container">
-                            <button id="addRowBtn" class="btn-primary btn-small" title="Add Row">
-                                <span class="material-symbols-outlined">add</span>
-                            </button>
-                            <button id="saveAllDetailsBtn" class="btn-primary btn-small" style="margin-left: 10px;" title="Save All Details">
-                                <span class="material-symbols-outlined">check</span>
-                            </button>
-                        </div>
-                    </section>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
+            </div>
+
+            <!-- Scrollable Video Details Content -->
+            <section id="videoDetailsSection" class="video-details-section" style="width: 100%; margin-top: 0;">
+                <div class="video-details-table-container">
+                    <table class="video-details-table">
+                        <tbody id="detailsTableBody">
+                            <!-- Rows will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="save-details-button-container">
+                    <button id="addRowBtn" class="btn-primary btn-small" title="Add Row">
+                        <span class="material-symbols-outlined">add</span>
+                    </button>
+                    <button id="saveAllDetailsBtn" class="btn-primary btn-small" style="margin-left: 10px;" title="Save All Details">
+                        <span class="material-symbols-outlined">check</span>
+                    </button>
+                </div>
+            </section>
             </section>
         </div>
     </main>
