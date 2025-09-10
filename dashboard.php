@@ -34,12 +34,11 @@ $conn = require 'db.php';
 
     <main class="container">
         <section class="dashboard-content">
-            <div class="card welcome-card">
-                <h2>Welcome to your Dashboard!</h2>
-                <p>This is where you can manage your organizations, folders, and video captures.</p>
-            </div>
-
             <div class="dashboard-grid-container">
+                <div class="card welcome-card">
+                    <h2>Welcome to your Dashboard!</h2>
+                    <p>This is where you can manage your organizations, folders, and video captures.</p>
+                </div>
                 <div class="card">
                     <h2>Organizations <a href="organizations_list.php" class="arrow-icon"><span class="material-symbols-outlined">arrow_forward</span></a></h2>
                     <div id="organizationsList" class="item-list">

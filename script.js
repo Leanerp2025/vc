@@ -18,46 +18,42 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to switch between upload interface and video player
     function switchToVideoPlayer(videoId, videoName) {
         const uploadInterfaceWrapper = document.querySelector('.upload-interface-wrapper');
-        const videoPlayerCard = document.querySelector('.video-player-card .sticky-header');
         
-        if (uploadInterfaceWrapper && videoPlayerCard) {
-            // Update the heading to show video name
-            const heading = videoPlayerCard.querySelector('h2');
-            if (heading) {
-                heading.textContent = videoName || 'Video Player';
-            }
+        const topHeading = document.getElementById('pageUploadHeading');
+        if (topHeading) {
+            topHeading.textContent = videoName || 'Video Player';
+        }
+
+        if (uploadInterfaceWrapper) {
+            // Transform the container to be the video player
+            uploadInterfaceWrapper.style.cssText = 'flex: 1; display: flex; padding: 0; border: 0; background-color: #000; border-radius: 8px; position: relative;';
             
-            // Replace upload interface with video player
+            // Replace content with the video element
             uploadInterfaceWrapper.innerHTML = `
-                <div class="video-player-wrapper" style="width: 100%; height: 100%; position: relative; background: #000; border-radius: 8px; overflow: hidden;">
-                    <video id="videoPlayer" controls style="width: 100%; height: 100%; object-fit: cover; background: #000; border-radius: 8px;">
-                        <source id="videoSource" src="get_video_file.php?video_id=${videoId}&t=${Date.now()}">
-                        Your browser does not support the video tag.
-                    </video>
-                    <button id="deleteVideoBtn" style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; font-size: 0.8em; z-index: 10; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="Delete Video">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
-                    </button>
-                </div>
+                <video id="videoPlayer" controls style="width: 100%; height: 100%; object-fit: contain;">
+                    <source id="videoSource" src="get_video_file.php?video_id=${videoId}&t=${Date.now()}">
+                    Your browser does not support the video tag.
+                </video>
+                <button id="deleteVideoBtn" style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; font-size: 0.8em; z-index: 10; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="Delete Video">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+                </button>
             `;
             
             // Reinitialize Plyr for the new video element
             const newVideoPlayer = document.getElementById('videoPlayer');
-            if (newVideoPlayer && window.player) {
-                window.player.destroy();
+            if (newVideoPlayer) {
+                if (window.player) {
+                    try { window.player.destroy(); } catch (e) {}
+                }
                 window.player = new Plyr(newVideoPlayer);
             }
             
             // Add event listener for the delete video button
             const deleteVideoBtn = document.getElementById('deleteVideoBtn');
             if (deleteVideoBtn) {
-                console.log('Adding delete button listener for video ID:', videoId);
                 deleteVideoBtn.addEventListener('click', () => {
-                    console.log('Delete button clicked for video ID:', videoId);
-                    // Always try to delete, even if videoId is null/undefined
                     deleteVideo(videoId || currentVideoId || null);
                 });
-            } else {
-                console.error('Delete button not found!');
             }
         }
     }
@@ -152,18 +148,21 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Function to switch back to upload interface
     function switchToUploadInterface() {
-        const uploadInterfaceWrapper = document.querySelector('.upload-interface-wrapper');
-        const videoPlayerCard = document.querySelector('.video-player-card .sticky-header');
+        const wrapper = document.querySelector('.upload-interface-wrapper');
         
-        if (uploadInterfaceWrapper && videoPlayerCard) {
-            // Update the heading back to upload
-            const heading = videoPlayerCard.querySelector('h2');
-            if (heading) {
-                heading.textContent = 'Upload Video';
+        if (wrapper) {
+            // Restore original styles for the upload form
+            const originalStyles = "flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 2px dashed #007bff; border-radius: 8px; padding: 15px; background-color: #f8f9fa; box-sizing: border-box;";
+            wrapper.style.cssText = originalStyles;
+            
+            // Update the page heading back to upload
+            const topHeading = document.getElementById('pageUploadHeading');
+            if (topHeading) {
+                topHeading.textContent = 'Upload Video';
             }
             
             // Replace video player with upload interface
-            uploadInterfaceWrapper.innerHTML = `
+            wrapper.innerHTML = `
                 <!-- Upload Tabs -->
                 <div class="upload-tabs" style="border-bottom: 1px solid #ddd; margin-bottom: 15px; width: 100%; box-sizing: border-box; display: flex;">
                     <button class="tab-link active" onclick="openUploadTab(event, 'tabFileUpload')" style="background: none; border: none; padding: 8px 12px; cursor: pointer; border-bottom: 2px solid #007bff; color: #007bff; font-weight: 500; flex: 1; text-align: center; box-sizing: border-box;">Upload File</button>
@@ -312,63 +311,56 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (embedCode) {
                             // Use embed code - replace upload interface with iframe
                             const uploadInterfaceWrapper = document.querySelector('.upload-interface-wrapper');
-                            const videoPlayerCard = document.querySelector('.video-player-card .sticky-header');
                             
-                            if (uploadInterfaceWrapper && videoPlayerCard) {
-                                // Update the heading to show video name
-                                const heading = videoPlayerCard.querySelector('h2');
-                                if (heading) {
-                                    heading.textContent = videoName || 'OneDrive Video';
+                            if (uploadInterfaceWrapper) {
+                                // ONLY update the top page heading
+                                const topHeading = document.getElementById('pageUploadHeading');
+                                if (topHeading) {
+                                    topHeading.textContent = data.video_name || 'OneDrive Video';
                                 }
-                                
-                                // Replace upload interface with OneDrive embed
+
+                                // Transform the container to be the video player
+                                uploadInterfaceWrapper.style.cssText = 'flex: 1; display: flex; padding: 0; border: 0; background-color: #000; border-radius: 8px; position: relative;';
+
+                                // Sanitize and update embed code to fill container
+                                let modifiedEmbedCode = embedCode
+                                    .replace(/width="[^"]*"/, 'width="100%"')
+                                    .replace(/height="[^"]*"/, 'height="100%"');
+
+                                // Replace content with OneDrive embed
                                 uploadInterfaceWrapper.innerHTML = `
-                                    <div class="video-player-wrapper" style="width: 100%; height: 100%; position: relative; background: #000; border-radius: 8px; overflow: hidden;">
-                                        <div style="width: 100%; height: 100%; border-radius: 8px; overflow: hidden;">
-                                            ${embedCode}
-                                        </div>
-                                        <button id="deleteVideoBtn" style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; font-size: 0.8em; z-index: 10; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="Delete Video">
-                                            <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
-                                        </button>
-                                    </div>
+                                    <div style="width: 100%; height: 100%;">${modifiedEmbedCode}</div>
+                                    <button id="deleteVideoBtn" style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 10; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="Delete Video">
+                                        <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+                                    </button>
                                 `;
                                 
                                 // Add event listener for the delete video button
                                 const deleteVideoBtn = document.getElementById('deleteVideoBtn');
                                 if (deleteVideoBtn) {
-                                    console.log('Adding delete button listener for OneDrive video ID:', videoId);
                                     deleteVideoBtn.addEventListener('click', () => {
-                                        console.log('Delete button clicked for OneDrive video ID:', videoId);
-                                        // Always try to delete, even if videoId is null/undefined
                                         deleteVideo(videoId || currentVideoId || null);
                                     });
-                                } else {
-                                    console.error('OneDrive delete button not found!');
                                 }
                             }
                             alert('OneDrive video embedded successfully!');
                         } else {
-                            // Switch to video player and load OneDrive URL
-                            switchToVideoPlayer(currentVideoId, videoName);
+                            // No embed code, so it's a direct link - use the standard player
+                            switchToVideoPlayer(currentVideoId, data.video_name || 'OneDrive Video');
                             
-                            // Try to play URL directly
-                            console.log('Playing OneDrive URL directly:', processedData);
-                            
+                            // Set the source for the new player
                             if (window.player) {
-                                window.player.source = {
+                               window.player.source = {
                                     type: 'video',
-                                    sources: [{
-                                        src: processedData,
-                                        type: 'video/mp4',
-                                    }],
-                                };
+                                    sources: [{ src: processedData, type: 'video/mp4' }],
+                               };
                             }
                             
                             alert('OneDrive video loaded!');
                         }
                         
                         // Load video details
-                        loadVideoAndDetails(currentVideoId, videoName, false);
+                        loadVideoAndDetails(currentVideoId, processedData || videoName, false);
                     } else {
                         alert('Failed to save OneDrive data: ' + (data.error || 'Unknown error'));
                     }
@@ -442,13 +434,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Upload response:', data);
                 if (data && data.success) {
                     uploadModal.style.display = 'none';
-                    alert('Video uploaded successfully!');
+                    alert('Video uploaded successfully.');
                     
-                    // Switch to video player and load video details
+                    // Use the local file name the user chose
+                    const chosenFileName = (fileInput && fileInput.files && fileInput.files[0] && fileInput.files[0].name) ? fileInput.files[0].name : (document.getElementById('videoCaptureNameDisplay')?.textContent || '').trim();
                     if (currentVideoId) {
-                        const videoName = document.getElementById('videoCaptureNameDisplay').textContent;
-                        switchToVideoPlayer(currentVideoId, videoName);
-                        loadVideoAndDetails(currentVideoId, videoName, false);
+                        switchToVideoPlayer(currentVideoId, chosenFileName);
+                        loadVideoAndDetails(currentVideoId, chosenFileName, false);
                     } else {
                         // Fallback to page reload if no current video
                         window.location.reload();
@@ -520,16 +512,22 @@ document.addEventListener('DOMContentLoaded', function () {
                         const videoPlayerCard = document.querySelector('.video-player-card .sticky-header');
                         
                         if (uploadInterfaceWrapper && videoPlayerCard) {
-                            // Update the heading to show video name
-                            const heading = videoPlayerCard.querySelector('h2');
-                            if (heading) {
-                                heading.textContent = videoName || 'OneDrive Video';
+                            // ONLY update the top page heading - NEVER touch Possible Improvements
+                            const topHeading = document.getElementById('pageUploadHeading') || document.querySelector('.main-content-wrapper > h2');
+                            if (topHeading) {
+                                topHeading.textContent = processedData || (videoName || 'OneDrive Video');
+                            }
+                            
+                            // ENSURE Possible Improvements heading is preserved
+                            const improvementsHeading = document.getElementById('improvementsHeading');
+                            if (improvementsHeading) {
+                                improvementsHeading.textContent = 'Possible Improvements';
                             }
                             
                             // Replace upload interface with OneDrive embed
                             uploadInterfaceWrapper.innerHTML = `
-                                <div class="video-player-wrapper" style="width: 100%; height: 100%; position: relative; background: #000; border-radius: 8px; overflow: hidden;">
-                                    <div style="width: 100%; height: 100%; border-radius: 8px; overflow: hidden;">
+                                <div class="video-player-wrapper" style="width: calc(100% + 30px); margin-left: -15px; margin-right: -15px; height: 100%; position: relative; background: #000; border-radius: 8px; overflow: hidden; box-sizing: border-box;">
+                                    <div style="width: 100%; height: 250px; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
                                         ${embedCode}
                                     </div>
                                     <button id="deleteVideoBtn" style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; font-size: 0.8em; z-index: 10; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="Delete Video">
@@ -553,27 +551,34 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                         alert('OneDrive video embedded successfully!');
                     } else {
-                        // Switch to video player and load OneDrive URL
-                        switchToVideoPlayer(currentVideoId, videoName);
+                        // Render external player (embed OneDrive/Stream URL) instead of Plyr
+                        const fileLabel = getFileNameFromUrl(processedData);
+                        const uploadInterfaceWrapper = document.querySelector('.upload-interface-wrapper');
+                        const videoPlayerCard = document.querySelector('.video-player-card .sticky-header');
+                        // ONLY update the top page heading - NEVER touch Possible Improvements
+                        const topHeading = document.getElementById('pageUploadHeading') || document.querySelector('.main-content-wrapper > h2');
+                        if (topHeading) topHeading.textContent = processedData || fileLabel || 'OneDrive Video';
                         
-                        // Try to play URL directly
-                        console.log('Playing OneDrive URL directly:', processedData);
-                        
-                        if (window.player) {
-                            window.player.source = {
-                                type: 'video',
-                                sources: [{
-                                    src: processedData,
-                                    type: 'video/mp4',
-                                }],
-                            };
+                        // ENSURE Possible Improvements heading is preserved
+                        const improvementsHeading = document.getElementById('improvementsHeading');
+                        if (improvementsHeading) {
+                            improvementsHeading.textContent = 'Possible Improvements';
                         }
-                        
+                        if (uploadInterfaceWrapper) {
+                            uploadInterfaceWrapper.innerHTML = `
+                                <div class="video-player-wrapper" style="width: 100%; height: 100%; position: relative; background: #000; border-radius: 8px; overflow: hidden; box-sizing: border-box;">
+                                    <iframe src="${processedData}"
+                                        style="width:100%;height:250px;border:0;"
+                                        allow="autoplay; encrypted-media"
+                                        allowfullscreen
+                                        title="OneDrive Video"></iframe>
+                                </div>`;
+                        }
                         alert('OneDrive video loaded!');
                     }
                     
                     // Load video details
-                    loadVideoAndDetails(currentVideoId, videoName, false);
+                    loadVideoAndDetails(currentVideoId, processedData || videoName, false);
                 } else {
                     alert('Failed to save OneDrive data: ' + (data.error || 'Unknown error'));
                 }
@@ -918,8 +923,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(data => {
                         if (data.success) {
                             alert('Video detail deleted successfully!');
+                            const deletedId = detailId;
                             row.remove();
                             updateDetailsRowNumbers();
+                            // Reset any improvements referencing this ID back to "Select ID"
+                            rebuildImprovementsIdSelects(deletedId);
                         } else {
                             alert('Error deleting video detail: ' + data.error);
                         }
@@ -1157,7 +1165,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     cycle_number: row.querySelector('input[name="cycle_number"]').value,
                     improvement: row.querySelector('input[name="improvement"]').value,
                     type_of_benefits: row.querySelector('input[name="type_of_benefits"]').value,
-                    video_id: currentVideoId
+                    video_id: currentVideoId || null
                 });
             });
 
@@ -1344,6 +1352,79 @@ document.addEventListener('DOMContentLoaded', function () {
         return dropdown;
     }
 
+    // Helper: when a video detail is deleted, clear selections in improvements that pointed to it
+    function rebuildImprovementsIdSelects(deletedDetailId) {
+        try {
+            // Keep lastDetailsData in sync (remove deleted detail)
+            if (lastDetailsData && Array.isArray(lastDetailsData.details)) {
+                lastDetailsData.details = lastDetailsData.details.filter(d => String(d.id) !== String(deletedDetailId));
+            }
+            const selects = document.querySelectorAll('#improvementsTableBody select[name="video_detail_id"]');
+            selects.forEach(sel => {
+                const currentVal = sel.value;
+                const newSelected = (String(currentVal) === String(deletedDetailId)) ? '' : currentVal;
+                // Rebuild options
+                sel.innerHTML = '';
+                const emptyOpt = document.createElement('option');
+                emptyOpt.value = '';
+                emptyOpt.textContent = 'Select ID';
+                sel.appendChild(emptyOpt);
+                const details = lastDetailsData && Array.isArray(lastDetailsData.details) ? lastDetailsData.details : [];
+                details.forEach(detail => {
+                    const id_fe = detail.id_fe || detail.id;
+                    const opt = document.createElement('option');
+                    opt.value = String(detail.id);
+                    opt.textContent = id_fe;
+                    if (newSelected && String(newSelected) === String(detail.id)) opt.selected = true;
+                    sel.appendChild(opt);
+                });
+            });
+        } catch (e) {
+            console.warn('rebuildImprovementsIdSelects error:', e);
+        }
+    }
+
+    // Minimal robust handler for any form with id="uploadForm" (inline or modal)
+    document.addEventListener('submit', function(e) {
+        const form = e.target && e.target.matches && e.target.matches('#uploadForm') ? e.target : null;
+        if (!form) return;
+        e.preventDefault();
+        if (!currentVideoId) {
+            alert('Please select a video capture first.');
+            return;
+        }
+        const fileInput = form.querySelector('#video') || form.querySelector('input[type="file"]');
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+            alert('Please choose a video file.');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('video_id', currentVideoId);
+        formData.append('video', fileInput.files[0]);
+        fetch('upload_existing_video.php', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.success) {
+                    alert('Video uploaded successfully.');
+                } else {
+                    alert('Upload failed: ' + (data && data.error ? data.error : 'Unknown error'));
+                }
+            })
+            .catch(err => {
+                console.error('Upload error:', err);
+                alert('An error occurred during upload: ' + err.message);
+            });
+    });
+
+    function getFileNameFromUrl(urlStr) {
+        try {
+            const u = new URL(urlStr, window.location.href);
+            const last = (u.pathname || '').split('/').pop() || '';
+            return decodeURIComponent(last) || 'OneDrive Video';
+        } catch (_) {
+            return 'OneDrive Video';
+        }
+    }
 
 
     });

@@ -54,9 +54,9 @@ if ($videoId) {
 <body data-video-id="<?= htmlspecialchars($videoId ?? '') ?>" data-video-name="<?= htmlspecialchars($videoName ?? '') ?>">
     <?php include 'header.php'; ?>
     <main class="container content-main-container">
-        <div class="main-content-wrapper" style="display: flex; flex-direction: column; gap: 25px;">
+        <div class="main-content-wrapper" style="display: flex; flex-direction: column; gap: 0;">
             <!-- Upload Video Heading - Not Floating -->
-            <h2 style="margin: 0 0 15px 0; padding: 0 25px;">Upload Video</h2>
+            <h2 id="pageUploadHeading" style="margin: 0 0 15px 0; padding: 0 25px;">Upload Video</h2>
             
             <!-- Sticky Video Player Section -->
             <div class="sticky-video-player">
@@ -64,7 +64,7 @@ if ($videoId) {
                     <div class="video-player-card card" style="padding-bottom: 0; padding-left: 25px; padding-right: 25px; flex: 1.5;">
                         <div class="sticky-header">
                             <div style="display: flex; flex-direction: row; gap: 8px; align-items: stretch; height: 280px;">
-                                        <div class="upload-interface-wrapper" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 2px dashed #007bff; border-radius: 8px; padding: 15px; background-color: #f8f9fa; box-sizing: border-box; overflow: hidden;">
+                                        <div class="upload-interface-wrapper" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 2px dashed #007bff; border-radius: 8px; padding: 15px; background-color: #f8f9fa; box-sizing: border-box;">
                                             
                                             <!-- Upload Tabs -->
                                             <div class="upload-tabs" style="border-bottom: 1px solid #ddd; margin-bottom: 15px; width: 100%; box-sizing: border-box; display: flex;">
@@ -112,7 +112,7 @@ if ($videoId) {
                         <!-- Possible Improvements Section -->
                         <div class="card possible-improvements-card" style="flex: 1; min-width: 350px; max-width: none; display: flex; flex-direction: column;">
                             <div class="improvements-header">
-                                <h2 style="color: #333; font-size: 1.1em; margin: 0; padding: 0; display: block; visibility: visible;">Possible Improvements</h2>
+                                <h2 id="improvementsHeading" style="color: #333; font-size: 1.1em; margin: 0; padding: 0; display: block; visibility: visible;">Possible Improvements</h2>
                                 <div class="improvements-actions">
                                     <button id="improvementsAddRow" class="icon-btn" title="Add Row">
                                         <span class="material-symbols-outlined">add</span>
@@ -148,30 +148,49 @@ if ($videoId) {
 
             <!-- Sticky Video Details Table Header -->
             <div class="sticky-video-details-header">
-                <h2 style="margin: 0 0 15px 0; padding: 0 25px;">Video Details</h2>
                 <div class="video-details-table-header-sticky">
                     <table class="video-details-table-header-only">
-                        <thead>
-                            <tr>
-                                <th style="width: 2%;">ID</th>
-                                <th style="width: 5%;">Operator</th>
-                                <th style="width: 30%;">Description</th>
-                                <th style="width: 6%;">Type</th>
-                                <th style="width: 6%;">Activity Type</th>
-                                <th style="width: 13%;" class="time-col">Start Time</th>
-                                <th style="width: 13%;" class="time-col">End Time</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
+                         <colgroup>
+                             <col style="width:4%">
+                             <col style="width:8%">
+                             <col style="width:24%">
+                             <col style="width:8%">
+                             <col style="width:8%">
+                             <col style="width:16%">
+                             <col style="width:16%">
+                             <col style="width:6%">
+                         </colgroup>
+                         <thead>
+                             <tr>
+                                 <th style="width: 4%;">ID</th>
+                                 <th style="width: 8%;">Operator</th>
+                                 <th style="width: 24%;">Description</th>
+                                 <th style="width: 8%;">Type</th>
+                                 <th style="width: 8%;">Activity Type</th>
+                                 <th style="width: 16%;" class="time-col">Start Time</th>
+                                 <th style="width: 16%;" class="time-col">End Time</th>
+                                 <th style="width: 6%;">Actions</th>
+                             </tr>
+                         </thead>
                     </table>
                 </div>
             </div>
 
             <!-- Scrollable Video Details Content -->
             <section id="videoDetailsSection" class="video-details-section" style="width: 100%; margin-top: 0;">
-                <div class="video-details-table-container">
+                <div class="video-details-table-container" style="overflow-x: hidden;">
                     <table class="video-details-table">
-                        <tbody id="detailsTableBody">
+                         <colgroup>
+                             <col style="width:4%">
+                             <col style="width:8%">
+                             <col style="width:24%">
+                             <col style="width:8%">
+                             <col style="width:8%">
+                             <col style="width:16%">
+                             <col style="width:16%">
+                             <col style="width:6%">
+                         </colgroup>
+                         <tbody id="detailsTableBody">
                             <!-- Rows will be added here dynamically -->
                         </tbody>
                     </table>
